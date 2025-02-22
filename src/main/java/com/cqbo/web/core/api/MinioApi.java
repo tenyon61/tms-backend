@@ -1,4 +1,4 @@
-package com.cqbo.web.manager;
+package com.cqbo.web.core.api;
 
 import com.cqbo.web.config.MinioClientConfig;
 import io.minio.*;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2024/5/25
  */
 @Component
-public class MinioManager {
+public class MinioApi {
 
     @Resource
     private MinioClientConfig minioClientConfig;

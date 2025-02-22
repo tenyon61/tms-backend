@@ -7,7 +7,7 @@ import com.cqbo.web.constant.UserConstant;
 import com.cqbo.web.exception.BusinessException;
 import com.cqbo.web.exception.ErrorCode;
 import com.cqbo.web.exception.ThrowUtils;
-import com.cqbo.web.manager.auth.StpKit;
+import com.cqbo.web.core.auth.StpKit;
 import com.cqbo.web.mapper.UserMapper;
 import com.cqbo.web.model.dto.user.UserQueryRequest;
 import com.cqbo.web.model.entity.User;

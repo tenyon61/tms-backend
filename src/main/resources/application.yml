@@ -73,12 +73,6 @@ s3:
     secretKey: ${s3.minio.secretKey}
     endpoint: ${s3.minio.endpoint}
     bucket: ${s3.minio.bucket}
-  cos:
-    secretId: xxx
-    secretKey: xxx
-    host: xxx
-    bucket: xxx
-    region: xxx
 # springdoc-openapi项目配置
 springdoc:
   swagger-ui:

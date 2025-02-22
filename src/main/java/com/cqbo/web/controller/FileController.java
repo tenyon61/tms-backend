@@ -9,7 +9,7 @@ import com.cqbo.web.config.MinioClientConfig;
 import com.cqbo.web.constant.FileConstant;
 import com.cqbo.web.exception.BusinessException;
 import com.cqbo.web.exception.ErrorCode;
-import com.cqbo.web.manager.MinioManager;
+import com.cqbo.web.core.api.MinioApi;
 import com.cqbo.web.model.dto.file.UploadFileRequest;
 import com.cqbo.web.model.entity.User;
 import com.cqbo.web.model.enums.FileUploadBizEnum;
@@ -36,7 +36,7 @@ public class FileController {
     Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Resource
-    private MinioManager minioManager;
+    private MinioApi minioApi;
 
     @Resource
     private MinioClientConfig minioClientConfig;
@@ -69,7 +69,7 @@ public class FileController {
             // 上传文件
             file = File.createTempFile(filepath, null);
             multipartFile.transferTo(file);
-            minioManager.uploadObject(filepath, file);
+            minioApi.uploadObject(filepath, file);
             // 返回可访问地址
             return ResultUtils.success(FileConstant.MINIO_HOST + "/" + minioClientConfig.getBucket() + filepath);
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class FileController {
     @GetMapping("/listObjs")
     public BaseResponse<List<String>> listObjs() {
         try {
-            List<String> strings = minioManager.listObjects();
+            List<String> strings = minioApi.listObjects();
             return ResultUtils.success(strings);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "minio:获取列表失败");
@@ -110,7 +110,7 @@ public class FileController {
     @PutMapping("/delete")
     public BaseResponse<Boolean> delete(@RequestParam String filename) {
         try {
-            minioManager.deleteObject(filename);
+            minioApi.deleteObject(filename);
             return ResultUtils.success(true);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "minio:删除对象失败");
@@ -126,7 +126,7 @@ public class FileController {
     @GetMapping("/download")
     public void download(@RequestParam String filename, HttpServletResponse response) {
         try {
-            InputStream fileInputStream = minioManager.getObject(filename);
+            InputStream fileInputStream = minioApi.getObject(filename);
             // todo 完善文件命名逻辑
             String newFileName = System.currentTimeMillis() + "." + FileUtil.getSuffix(filename);
             response.setHeader("Content-Disposition", "attachment;filename=" + newFileName);
@@ -147,7 +147,7 @@ public class FileController {
     @GetMapping("/statObj")
     public BaseResponse<String> statObj(@RequestParam String filename, HttpServletResponse response) {
         try {
-            StatObjectResponse statObjectResponse = minioManager.statObject(filename);
+            StatObjectResponse statObjectResponse = minioApi.statObject(filename);
             return ResultUtils.success(statObjectResponse.toString());
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "minio:获取信息失败");
@@ -163,7 +163,7 @@ public class FileController {
     @GetMapping("/getHttpUrl")
     public BaseResponse<String> getHttpUrl(@RequestParam String filename) {
         try {
-            String url = minioManager.getObjectUrl(filename);
+            String url = minioApi.getObjectUrl(filename);
             return ResultUtils.success(url);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "minio:文件的下载地址获取");

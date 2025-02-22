@@ -6,6 +6,7 @@ import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.cqbo.web.config.MinioClientConfig;
 import com.cqbo.web.constant.FileConstant;
+import com.cqbo.web.core.api.MinioApi;
 import com.cqbo.web.exception.BusinessException;
 import com.cqbo.web.exception.ErrorCode;
 import com.cqbo.web.exception.ThrowUtils;
@@ -30,7 +31,7 @@ public class FileManager {
     private MinioClientConfig minioClientConfig;
 
     @Resource
-    private MinioManager minioManager;
+    private MinioApi minioApi;
 
     /**
      * 上传图片
@@ -54,9 +55,9 @@ public class FileManager {
             // 上传文件
             file = File.createTempFile(uploadPath, null);
             multipartFile.transferTo(file);
-            minioManager.uploadObject(uploadPath, file);
+            minioApi.uploadObject(uploadPath, file);
             // 获取图片信息对象
-            InputStream ins = minioManager.getObject(uploadPath);
+            InputStream ins = minioApi.getObject(uploadPath);
             BufferedImage image = ImageIO.read(ins);
 //            // 计算宽高
             int picWidth = image.getWidth();

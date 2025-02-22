@@ -1,4 +1,4 @@
-package com.cqbo.web.manager.auth;
+package com.cqbo.web.core.auth;
 
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
