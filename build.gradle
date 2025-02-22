@@ -1,0 +1,90 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.ayfox'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+ext {
+    springBootVersion = '3.4.3'
+    logbackVersion = '1.5.12'
+    mybatisPlusVersion = '3.5.9'
+    knife4jVersion = '4.4.0'
+    satokenVersion = '1.40.0'
+    mysqlVersion = '9.1.0'
+    lombokVersion = '1.18.36'
+    minioVersion = '8.5.14'
+    cosVersion = '5.6.227'
+    hutoolVersion = '5.8.26'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        mavenBom("com.baomidou:mybatis-plus-bom:${mybatisPlusVersion}")
+    }
+}
+dependencies {
+    // Spring Boot Web
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'ch.qos.logback', module: 'logback-core'
+    }
+    // Spring Boot AOP
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+    // Logback
+    implementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    implementation("ch.qos.logback:logback-core:${logbackVersion}")
+    // Mybatis Plus
+    implementation("com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}")
+    implementation("com.baomidou:mybatis-plus-jsqlparser:${mybatisPlusVersion}")
+    // Knife4j
+//    implementation("com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:${knife4jVersion}")
+    implementation("com.github.xingfudeshi:knife4j-openapi3-jakarta-spring-boot-starter:4.6.0")
+    // Sa-Token 整合 Redis （使用 jackson 序列化方式）
+    implementation("cn.dev33:sa-token-spring-boot3-starter:${satokenVersion}")
+    implementation("cn.dev33:sa-token-redis-jackson:${satokenVersion}"){
+        exclude(group: "io.lettuce", module: "lettuce-core")
+    }
+    implementation("org.apache.commons:commons-pool2")
+    implementation 'redis.clients:jedis'
+    // Minio
+    implementation("io.minio:minio:${minioVersion}")
+    // Cos
+    implementation("com.qcloud:cos_api:${cosVersion}")
+    // Hutool
+    implementation("cn.hutool:hutool-all:${hutoolVersion}")
+    // Spring Boot Configuration
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    // Lombok
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    // MySQL Connector
+    runtimeOnly("com.mysql:mysql-connector-j:${mysqlVersion}")
+    // Spring Boot Devtools
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    // Spring Boot Test
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // Junit
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

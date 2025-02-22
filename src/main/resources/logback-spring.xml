@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="10 minutes">
+    <!--  控制台输出  -->
+    <appender name="stdot" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 过滤掉 trace 级别的日志-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>trace</level>
+        </filter>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <!-- 日期和时间 [日志级别][记录器名称][方法名][行号] [...颜色...]-> 日志消息-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss,GMT+8} [%cyan(%thread)] [%highlight(%-5level)] [%green(%logger{56})] [%L]-> %m%n</pattern>
+        </layout>
+    </appender>
+
+    <springProperty name="log.path" scope="context" source="log.folder"/>
+    <springProperty name="log.root.level" scope="context" source="log.root.level"/>
+    <springProperty name="appname" scope="context" source="spring.application.name"/>
+
+    <property name="LOG_FOLDER" value="logs"/>
+
+    <!-- 使用 SizeAndTimeBasedRollingPolicy 滚动策略 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/${LOG_FOLDER}/${appname}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${log.path}/${LOG_FOLDER}/${appname}.%d{yyyyMMdd}.%i.log</FileNamePattern>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <!-- 每个日志文件的最大大小 -->
+            <MaxFileSize>20MB</MaxFileSize>
+            <!-- 保留最多7天的日志 -->
+            <maxHistory>7</maxHistory>
+            <!-- 总日志文件大小限制 -->
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <!-- 设置日志编码和格式 -->
+        <encoder>
+            <charset>utf-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss,GMT+8} [%p][%c][%M][%L]-> %m%n</pattern>
+        </encoder>
+        <!-- 设置为 true 以追加日志到文件 -->
+        <append>true</append>
+        <!-- 不需要启用文件写入时的审慎模式 -->
+        <prudent>false</prudent>
+    </appender>
+
+    <!-- 日志级别别名定义 -->
+    <logger name="org.springframework.web" level="debug"/>
+    <logger name="org.hibernate" level="warn"/>
+
+    <root level="${log.root.level}">
+        <appender-ref ref="stdot"/>
+        <appender-ref ref="file"/>
+    </root>
+    <!-- TRACE DEBUG INFO WARN ERROR FATAL-->
+</configuration>

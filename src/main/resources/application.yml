@@ -1,0 +1,104 @@
+# 公共配置文件
+server:
+  address: 0.0.0.0
+  port: 8100
+  servlet:
+    context-path: /
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+        path: "/"
+spring:
+  application:
+    name: cqbo-backend
+  # 默认 local 环境
+  profiles:
+    active: local
+  # 文件上传
+  servlet:
+    multipart:
+      # 大小限制
+      max-file-size: 10MB
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  # session 配置
+  session:
+    timeout: 2592000
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://${spring.datasource.host}:3306/cqbo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&autoReconnect=false&useSSL=false
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: HikariCPDatasource
+      minimum-idle: 5
+      idle-timeout: 180000
+      maximum-pool-size: 10
+      auto-commit: true
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  data:
+    redis:
+      database: 10
+      host: ${spring.datasource.host}
+      port: 6379
+      password: ${spring.datasource.password}
+      jedis:
+        pool:
+          max-wait: -1
+          max-idle: 5
+          min-idle: 0
+          max-active: 20
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 全局逻辑删除的实体字段名
+      logic-delete-field: isDelete
+      # 逻辑已删除值（默认为 1）
+      logic-delete-value: 1
+      # 逻辑未删除值（默认为 0）
+      logic-not-delete-value: 0
+# 对象存储
+s3:
+  minio:
+    accessKey: ${s3.minio.accessKey}
+    secretKey: ${s3.minio.secretKey}
+    endpoint: ${s3.minio.endpoint}
+    bucket: ${s3.minio.bucket}
+  cos:
+    secretId: xxx
+    secretKey: xxx
+    host: xxx
+    bucket: xxx
+    region: xxx
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: com.cqbo.web.controller
+# knife4j的增强配置
+knife4j:
+  enable: true
+  production: false
+  setting:
+    language: zh_cn
+# 日志持久化
+log:
+  folder: D:/tmp/cqbo-backend
+  root:
+    level: info
