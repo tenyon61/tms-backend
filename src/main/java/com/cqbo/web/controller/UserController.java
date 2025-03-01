@@ -14,7 +14,7 @@ import com.cqbo.web.model.dto.user.UserQueryRequest;
 import com.cqbo.web.model.dto.user.UserUpdateMyRequest;
 import com.cqbo.web.model.dto.user.UserUpdateRequest;
 import com.cqbo.web.model.entity.User;
-import com.cqbo.web.model.vo.system.user.UserVO;
+import com.cqbo.web.model.vo.user.UserVO;
 import com.cqbo.web.service.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;

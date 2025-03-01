@@ -1,4 +1,4 @@
-package com.cqbo.web.model.vo.system.user;
+package com.cqbo.web.model.vo.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@Schema(description = "用户视图（脱敏）")
-public class UserVO implements Serializable {
+@Schema(description = "已登录用户信息（脱敏）")
+public class LoginUserVO implements Serializable {
 
+    /**
+     * 用户 id
+     */
     @Schema(description = "id")
     private Long id;
-
-    @Schema(description = "账号")
-    private String userAccount;
 
     @Schema(description = "用户昵称")
     private String userName;
@@ -29,10 +29,18 @@ public class UserVO implements Serializable {
     @Schema(description = "用户角色")
     private String userRole;
 
+    @Schema(description = "会员编号")
+    private Long vipNumber;
+
+    @Schema(description = "编辑时间")
+    private Date editTime;
+
     @Schema(description = "创建时间")
     private Date createTime;
 
+    @Schema(description = "更新时间")
+    private Date updateTime;
+
     @Serial
     private static final long serialVersionUID = 1L;
-
 }

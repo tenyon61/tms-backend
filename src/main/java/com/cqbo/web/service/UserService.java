@@ -2,8 +2,8 @@ package com.cqbo.web.service;
 
 import com.cqbo.web.model.dto.user.UserQueryRequest;
 import com.cqbo.web.model.entity.User;
-import com.cqbo.web.model.vo.system.user.LoginUserVO;
-import com.cqbo.web.model.vo.system.user.UserVO;
+import com.cqbo.web.model.vo.user.LoginUserVO;
+import com.cqbo.web.model.vo.user.UserVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 

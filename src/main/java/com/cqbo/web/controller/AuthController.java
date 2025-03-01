@@ -9,7 +9,7 @@ import com.cqbo.web.exception.ThrowUtils;
 import com.cqbo.web.model.dto.user.UserLoginRequest;
 import com.cqbo.web.model.dto.user.UserRegisterRequest;
 import com.cqbo.web.model.entity.User;
-import com.cqbo.web.model.vo.system.user.LoginUserVO;
+import com.cqbo.web.model.vo.user.LoginUserVO;
 import com.cqbo.web.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
