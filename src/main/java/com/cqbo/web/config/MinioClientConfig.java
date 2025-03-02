@@ -39,7 +39,6 @@ public class MinioClientConfig {
     @Bean
     public MinioClient minioClient() {
         // 初始化用户身份信息(secretId, secretKey)
-        MinioClient minioClient = MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
-        return minioClient;
+        return MinioClient.builder().endpoint(endpoint).credentials(accessKey, secretKey).build();
     }
 }

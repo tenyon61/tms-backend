@@ -102,8 +102,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
-        StpKit.SYSTEM.login(user.getId());
-        StpKit.SYSTEM.getSession().set(UserConstant.USER_LOGIN_STATE, user);
+        StpKit.BMS.login(user.getId());
+        StpKit.BMS.getSession().set(UserConstant.USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
     }
 
@@ -115,10 +115,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public User getLoginUser() {
         // 先判断是否已登录
-        ThrowUtils.throwIf(!StpKit.SYSTEM.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
-        Object userObj = StpKit.SYSTEM.getSession().get(UserConstant.USER_LOGIN_STATE);
+        ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
+        Object userObj = StpKit.BMS.getSession().get(UserConstant.USER_LOGIN_STATE);
         User currentUser = (User) userObj;
-        ThrowUtils.throwIf(!StpKit.SYSTEM.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
+        ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
@@ -133,10 +133,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean logout() {
-        ThrowUtils.throwIf(!StpKit.SYSTEM.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
+        ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
         // 移除登录态
-        StpKit.SYSTEM.getSession().removeTokenSign(UserConstant.USER_LOGIN_STATE);
-        StpKit.SYSTEM.logout();
+        StpKit.BMS.getSession().removeTokenSign(UserConstant.USER_LOGIN_STATE);
+        StpKit.BMS.logout();
         return true;
     }
 

@@ -8,7 +8,7 @@ import cn.dev33.satoken.stp.StpUtil;
  */
 public class StpKit {
 
-    public static final String SYSTEM_TYPE = "system";
+    public static final String BMS_TYPE = "bms";
     /**
      * 默认原生会话对象
      */
@@ -17,5 +17,5 @@ public class StpKit {
     /**
      * 代替原生默认会话
      */
-    public static final StpLogic SYSTEM = new StpLogic(SYSTEM_TYPE);
+    public static final StpLogic BMS = new StpLogic(BMS_TYPE);
 }

@@ -1,9 +1,10 @@
 package com.cqbo.web.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cqbo.web.annotation.AuthCheck;
 import com.cqbo.web.common.BaseResponse;
 import com.cqbo.web.common.DeleteRequest;
 import com.cqbo.web.common.ResultUtils;
-import com.cqbo.web.annotation.AuthCheck;
 import com.cqbo.web.constant.BmsConstant;
 import com.cqbo.web.constant.UserConstant;
 import com.cqbo.web.exception.BusinessException;
@@ -16,12 +17,9 @@ import com.cqbo.web.model.dto.user.UserUpdateRequest;
 import com.cqbo.web.model.entity.User;
 import com.cqbo.web.model.vo.user.UserVO;
 import com.cqbo.web.service.UserService;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +35,8 @@ import java.util.List;
  */
 @Tag(name = "UserController", description = "用户管理接口")
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController {
-    Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Resource
     private UserService userService;

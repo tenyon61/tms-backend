@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "AuthController", description = "通用授权接口")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Resource
