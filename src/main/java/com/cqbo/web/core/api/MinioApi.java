@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * minio对象存储操作
  *
- * @author yovvis
+ * @author tenyon
  * @date 2024/5/25
  */
 @Component

@@ -8,13 +8,13 @@ import com.cqbo.web.exception.BusinessException;
 import com.cqbo.web.exception.ErrorCode;
 import com.cqbo.web.exception.ThrowUtils;
 import com.cqbo.web.core.auth.StpKit;
-import com.cqbo.web.mapper.UserMapper;
+import com.cqbo.web.mapper.SysUserMapper;
 import com.cqbo.web.model.dto.user.UserQueryRequest;
-import com.cqbo.web.model.entity.User;
+import com.cqbo.web.model.entity.SysUser;
 import com.cqbo.web.model.enums.UserRoleEnum;
 import com.cqbo.web.model.vo.user.LoginUserVO;
 import com.cqbo.web.model.vo.user.UserVO;
-import com.cqbo.web.service.UserService;
+import com.cqbo.web.service.SysUserService;
 import com.cqbo.web.utils.SqlUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -33,9 +33,9 @@ import java.util.stream.Collectors;
  * 用户服务实现
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(SysUserServiceImpl.class);
 
     @Override
     public long register(String userAccount, String userPassword, String checkPassword) {
@@ -55,7 +55,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         synchronized (userAccount.intern()) {
             // 1.账户不能重复
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("userAccount", userAccount);
             long count = this.count(queryWrapper);
             if (count > 0) {
@@ -64,16 +64,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             // 2.加密
             String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + userPassword).getBytes());
             // 3.插入数据
-            User user = new User();
-            user.setUserAccount(userAccount);
-            user.setUserPassword(encryptPassword);
-            user.setUserName("游客123");
-            user.setUserRole(UserRoleEnum.USER.getValue());
-            boolean saveResult = this.save(user);
+            SysUser sysUser = new SysUser();
+            sysUser.setUserAccount(userAccount);
+            sysUser.setUserPassword(encryptPassword);
+            sysUser.setUserName("游客123");
+            sysUser.setUserRole(UserRoleEnum.USER.getValue());
+            boolean saveResult = this.save(sysUser);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
             }
-            return user.getId();
+            return sysUser.getId();
         }
     }
 
@@ -92,19 +92,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + userPassword).getBytes());
         // 查询用户是否存在
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPassword", encryptPassword);
-        User user = this.getOne(queryWrapper);
+        SysUser sysUser = this.getOne(queryWrapper);
         // 用户不存在
-        if (user == null) {
+        if (sysUser == null) {
             logger.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
-        StpKit.BMS.login(user.getId());
-        StpKit.BMS.getSession().set(UserConstant.USER_LOGIN_STATE, user);
-        return this.getLoginUserVO(user);
+        StpKit.BMS.login(sysUser.getId());
+        StpKit.BMS.getSession().set(UserConstant.USER_LOGIN_STATE, sysUser);
+        return this.getLoginUserVO(sysUser);
     }
 
     /**
@@ -113,13 +113,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return
      */
     @Override
-    public User getLoginUser() {
+    public SysUser getLoginUser() {
         // 先判断是否已登录
         ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
         Object userObj = StpKit.BMS.getSession().get(UserConstant.USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
+        SysUser currentSysUser = (SysUser) userObj;
         ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
-        if (currentUser == null || currentUser.getId() == null) {
+        if (currentSysUser == null || currentSysUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
@@ -128,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 //        if (currentUser == null) {
 //            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
 //        }
-        return currentUser;
+        return currentSysUser;
     }
 
     @Override
@@ -141,35 +141,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public LoginUserVO getLoginUserVO(User user) {
-        if (user == null) {
+    public LoginUserVO getLoginUserVO(SysUser sysUser) {
+        if (sysUser == null) {
             return null;
         }
         LoginUserVO loginUserVO = new LoginUserVO();
-        BeanUtils.copyProperties(user, loginUserVO);
+        BeanUtils.copyProperties(sysUser, loginUserVO);
         return loginUserVO;
     }
 
     @Override
-    public UserVO getUserVO(User user) {
-        if (user == null) {
+    public UserVO getUserVO(SysUser sysUser) {
+        if (sysUser == null) {
             return null;
         }
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        BeanUtils.copyProperties(sysUser, userVO);
         return userVO;
     }
 
     @Override
-    public List<UserVO> getUserVOList(List<User> userList) {
-        if (CollectionUtils.isEmpty(userList)) {
+    public List<UserVO> getUserVOList(List<SysUser> sysUserList) {
+        if (CollectionUtils.isEmpty(sysUserList)) {
             return new ArrayList<>();
         }
-        return userList.stream().map(this::getUserVO).collect(Collectors.toList());
+        return sysUserList.stream().map(this::getUserVO).collect(Collectors.toList());
     }
 
     @Override
-    public QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
+    public QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest) {
         if (userQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
@@ -180,7 +180,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String userRole = userQueryRequest.getUserRole();
         String sortField = userQueryRequest.getSortField();
         String sortOrder = userQueryRequest.getSortOrder();
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(ObjectUtil.isNotEmpty(id), "id", id);
         queryWrapper.eq(StrUtil.isNotBlank(userAccount), "userAccount", userAccount);
         queryWrapper.eq(StrUtil.isNotBlank(userRole), "userRole", userRole);

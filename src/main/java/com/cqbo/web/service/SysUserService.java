@@ -1,7 +1,7 @@
 package com.cqbo.web.service;
 
 import com.cqbo.web.model.dto.user.UserQueryRequest;
-import com.cqbo.web.model.entity.User;
+import com.cqbo.web.model.entity.SysUser;
 import com.cqbo.web.model.vo.user.LoginUserVO;
 import com.cqbo.web.model.vo.user.UserVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 用户服务
  */
-public interface UserService extends IService<User> {
+public interface SysUserService extends IService<SysUser> {
 
     /**
      * 用户登录
@@ -38,7 +38,7 @@ public interface UserService extends IService<User> {
      *
      * @return
      */
-    User getLoginUser();
+    SysUser getLoginUser();
 
     /**
      * 用户注销
@@ -52,23 +52,23 @@ public interface UserService extends IService<User> {
      *
      * @return
      */
-    LoginUserVO getLoginUserVO(User user);
+    LoginUserVO getLoginUserVO(SysUser sysUser);
 
     /**
      * 获取脱敏的用户信息
      *
-     * @param user
+     * @param sysUser
      * @return
      */
-    UserVO getUserVO(User user);
+    UserVO getUserVO(SysUser sysUser);
 
     /**
      * 获取脱敏的用户信息
      *
-     * @param userList
+     * @param sysUserList
      * @return
      */
-    List<UserVO> getUserVOList(List<User> userList);
+    List<UserVO> getUserVOList(List<SysUser> sysUserList);
 
     /**
      * 获取查询条件
@@ -76,6 +76,6 @@ public interface UserService extends IService<User> {
      * @param userQueryRequest
      * @return
      */
-    QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+    QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest);
 
 }

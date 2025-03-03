@@ -8,9 +8,9 @@ import com.cqbo.web.exception.ErrorCode;
 import com.cqbo.web.exception.ThrowUtils;
 import com.cqbo.web.model.dto.user.UserLoginRequest;
 import com.cqbo.web.model.dto.user.UserRegisterRequest;
-import com.cqbo.web.model.entity.User;
+import com.cqbo.web.model.entity.SysUser;
 import com.cqbo.web.model.vo.user.LoginUserVO;
-import com.cqbo.web.service.UserService;
+import com.cqbo.web.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "AuthController", description = "通用授权接口")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Resource
-    private UserService userService;
+    private SysUserService sysUserService;
 
     @Operation(summary = "用户登录")
     @PostMapping("/login")
@@ -41,7 +41,7 @@ public class AuthController {
         if (StrUtil.hasBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        LoginUserVO loginUserVO = userService.login(userAccount, userPassword);
+        LoginUserVO loginUserVO = sysUserService.login(userAccount, userPassword);
         return ResultUtils.success(loginUserVO);
     }
 
@@ -57,14 +57,14 @@ public class AuthController {
         if (StrUtil.hasBlank(userAccount, userPassword, checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long userId = userService.register(userAccount, userPassword, checkPassword);
+        long userId = sysUserService.register(userAccount, userPassword, checkPassword);
         return ResultUtils.success(userId);
     }
 
     @Operation(summary = "用户注销")
     @PostMapping("/logout")
     public BaseResponse<Boolean> logout() {
-        boolean res = userService.logout();
+        boolean res = sysUserService.logout();
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(res);
     }
@@ -72,8 +72,8 @@ public class AuthController {
     @Operation(summary = "获取当前登录用户")
     @GetMapping("/getLoginUser")
     public BaseResponse<LoginUserVO> getLoginUser() {
-        User loginUser = userService.getLoginUser();
-        return ResultUtils.success(userService.getLoginUserVO(loginUser));
+        SysUser loginSysUser = sysUserService.getLoginUser();
+        return ResultUtils.success(sysUserService.getLoginUserVO(loginSysUser));
     }
 
 }

@@ -3,7 +3,7 @@ server:
   address: 0.0.0.0
   port: 8100
   servlet:
-    context-path: /api
+    context-path: /
     # cookie 30 天过期
     session:
       cookie:
@@ -29,7 +29,7 @@ spring:
     timeout: 2592000
   # 数据库配置
   datasource:
-    url: jdbc:mysql://${spring.datasource.host}:3306/cqbo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&autoReconnect=false&useSSL=false
+    url: jdbc:mysql://${spring.datasource.host}:3306/bms_dev?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&autoReconnect=false&useSSL=false
     username: ${spring.datasource.username}
     password: ${spring.datasource.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
