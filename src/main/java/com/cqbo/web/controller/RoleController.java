@@ -78,7 +78,7 @@ public class RoleController {
 
     @Operation(summary = "分页获取角色")
     @PostMapping("/listPage")
-    public BaseResponse<Page<SysRole>> listUserByPage(@RequestBody RoleQueryRequest roleQueryRequest) {
+    public BaseResponse<Page<SysRole>> listRoleByPage(@RequestBody RoleQueryRequest roleQueryRequest) {
         long current = roleQueryRequest.getCurrent();
         long size = roleQueryRequest.getPageSize();
         Page<SysRole> rolePage = sysRoleService.page(new Page<>(current, size),
