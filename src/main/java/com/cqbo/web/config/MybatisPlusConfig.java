@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2024/5/25
  */
 @Configuration
-@MapperScan("com.cqbo.web.mapper")
+//@MapperScan("com.cqbo.web.mapper")
 public class MybatisPlusConfig {
 
     /**

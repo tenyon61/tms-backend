@@ -60,7 +60,7 @@ public class RoleController {
         }
         SysRole sysRole = new SysRole();
         BeanUtils.copyProperties(roleUpdateRequest, sysRole);
-        boolean res = sysRoleService.save(sysRole);
+        boolean res = sysRoleService.updateById(sysRole);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }

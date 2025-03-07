@@ -25,7 +25,7 @@ public class Knife4jConfig {
                         .version("1.0.0")
                         .termsOfService("https://tenyon.cn/cc")
                         // 开发者联系方式
-                        .contact(new Contact().name("Yovvis")
+                        .contact(new Contact().name("tenyon")
                                 .email("tenyon@cqbo.com")));
     }
 }
