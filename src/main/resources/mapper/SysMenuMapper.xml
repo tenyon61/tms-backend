@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cqbo.web.mapper.SysMenuMapper">
+<mapper namespace="com.tms.web.mapper.SysMenuMapper">
 
-    <resultMap id="BaseResultMap" type="com.cqbo.web.model.entity.SysMenu">
+    <resultMap id="BaseResultMap" type="com.tms.web.model.entity.SysMenu">
             <id property="id" column="id" />
             <result property="parentId" column="parentId" />
             <result property="title" column="title" />
