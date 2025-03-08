@@ -3,7 +3,10 @@ package com.tms.web.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tms.web.model.dto.role.RoleQueryRequest;
+import com.tms.web.model.dto.role.RoleSelectItem;
 import com.tms.web.model.entity.SysRole;
+
+import java.util.List;
 
 /**
  * @author tenyon

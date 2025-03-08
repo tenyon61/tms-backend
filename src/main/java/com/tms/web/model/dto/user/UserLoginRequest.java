@@ -16,6 +16,9 @@ public class UserLoginRequest implements Serializable {
     @Schema(description = "密码")
     private String userPassword;
 
+    @Schema(description = "角色")
+    private String roleIds;
+
     @Serial
     private static final long serialVersionUID = 1L;
 

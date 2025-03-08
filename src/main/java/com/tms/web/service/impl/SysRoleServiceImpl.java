@@ -8,10 +8,13 @@ import com.tms.web.exception.BusinessException;
 import com.tms.web.exception.ErrorCode;
 import com.tms.web.mapper.SysRoleMapper;
 import com.tms.web.model.dto.role.RoleQueryRequest;
+import com.tms.web.model.dto.role.RoleSelectItem;
 import com.tms.web.model.entity.SysRole;
 import com.tms.web.service.SysRoleService;
 import com.tms.web.utils.SqlUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author tenyon
@@ -41,6 +44,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals("ascend"), sortField);
         return queryWrapper;
     }
+
 }
 
 

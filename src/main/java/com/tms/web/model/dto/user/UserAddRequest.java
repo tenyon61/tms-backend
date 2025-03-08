@@ -25,6 +25,9 @@ public class UserAddRequest implements Serializable {
     @Schema(description = "手机号")
     private String phone;
 
+    @Schema(description = "角色")
+    private String roleIds;
+
     @Serial
     private static final long serialVersionUID = 1L;
 }

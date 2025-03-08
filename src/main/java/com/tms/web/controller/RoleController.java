@@ -9,18 +9,20 @@ import com.tms.web.exception.ErrorCode;
 import com.tms.web.exception.ThrowUtils;
 import com.tms.web.model.dto.role.RoleAddRequest;
 import com.tms.web.model.dto.role.RoleQueryRequest;
+import com.tms.web.model.dto.role.RoleSelectItem;
 import com.tms.web.model.dto.role.RoleUpdateRequest;
 import com.tms.web.model.entity.SysRole;
 import com.tms.web.service.SysRoleService;
+import com.tms.web.service.SysUserRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色管理接口
@@ -87,4 +89,17 @@ public class RoleController {
     }
     // endregion
 
+    @Operation(summary = "获取下拉角色列表")
+    @GetMapping("/selectList")
+    public BaseResponse<List<RoleSelectItem>> selectRoleList() {
+        List<SysRole> list = sysRoleService.list();
+        List<RoleSelectItem> result = list.stream().map(role -> {
+            RoleSelectItem item = new RoleSelectItem();
+            item.setValue(role.getId());
+            item.setLabel(role.getRoleName());
+            item.setChecked(false);
+            return item;
+        }).collect(Collectors.toList());
+        return ResultUtils.success(result);
+    }
 }
