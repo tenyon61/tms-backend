@@ -24,7 +24,7 @@ public class UserVO implements Serializable {
     private String userAvatar;
 
     @Schema(description = "性别")
-    private String sex;
+    private Integer sex;
 
     @Schema(description = "用户简介")
     private String userProfile;

@@ -153,8 +153,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR, "删除用户失败！");
         QueryWrapper<SysUserRole> query = new QueryWrapper<>();
         query.lambda().eq(SysUserRole::getUserId, id);
-        boolean res2 = sysUserRoleService.remove(query);
-        ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联删除用户角色失败！");
+        sysUserRoleService.remove(query);
     }
 
     @Override
@@ -164,9 +163,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         // 把前端逗号分割的字符串转成数组
         String[] roleIds = sysUser.getRoleIds().split(",");
         // 删除用户原来的角色
-        QueryWrapper<SysUserRole> query = new QueryWrapper<>();
-        query.lambda().eq(SysUserRole::getUserId, sysUser.getId());
-        sysUserRoleService.remove(query);
+        QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysUserRole::getUserId, sysUser.getId());
+        sysUserRoleService.remove(queryWrapper);
         // 重新插入
         if (roleIds.length > 0) {
             List<SysUserRole> userRoles = new ArrayList<>();
@@ -180,6 +179,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             boolean res2 = sysUserRoleService.saveBatch(userRoles);
             ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联更新用户角色失败！");
         }
+    }
+
+    @Override
+    public List<Long> getRoleList(Long id) {
+        QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().select(SysUserRole::getRoleId).eq(SysUserRole::getUserId, id);
+        return sysUserRoleService.listObjs(queryWrapper);
     }
 
     @Override

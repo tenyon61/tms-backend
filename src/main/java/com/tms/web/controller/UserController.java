@@ -14,7 +14,6 @@ import com.tms.web.model.dto.user.UserUpdateMyRequest;
 import com.tms.web.model.dto.user.UserUpdateRequest;
 import com.tms.web.model.entity.SysUser;
 import com.tms.web.model.vo.user.UserVO;
-import com.tms.web.service.SysUserRoleService;
 import com.tms.web.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -142,5 +141,11 @@ public class UserController {
         boolean res = sysUserService.updateById(sysUser);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
+    }
+
+    @Operation(summary = "获取用户角色列表")
+    @GetMapping("/getUserRoleList")
+    public BaseResponse<List<Long>> getUserRoleList(long id) {
+        return ResultUtils.success(sysUserService.getRoleList(id));
     }
 }

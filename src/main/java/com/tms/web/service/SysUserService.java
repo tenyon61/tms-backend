@@ -99,4 +99,10 @@ public interface SysUserService extends IService<SysUser> {
      * @param sysUser
      */
     void updateUser(SysUser sysUser);
+
+    /**
+     * @param id
+     * @return
+     */
+    List<Long> getRoleList(Long id);
 }
