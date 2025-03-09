@@ -13,18 +13,17 @@ import com.tms.web.model.dto.user.UserQueryRequest;
 import com.tms.web.model.dto.user.UserUpdateMyRequest;
 import com.tms.web.model.dto.user.UserUpdateRequest;
 import com.tms.web.model.entity.SysUser;
-import com.tms.web.model.entity.SysUserRole;
 import com.tms.web.model.vo.user.UserVO;
 import com.tms.web.service.SysUserRoleService;
 import com.tms.web.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,14 +40,12 @@ public class UserController {
 
     @Resource
     private SysUserService sysUserService;
-    @Resource
-    private SysUserRoleService sysUserRoleService;
 
     // region 增删改查
 
     @Operation(summary = "创建用户")
     @PostMapping("/add")
-    public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest) {
+    public BaseResponse<Long> addUser(@RequestBody @Valid UserAddRequest userAddRequest) {
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -58,23 +55,7 @@ public class UserController {
         String defaultPassword = "11111";
         String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + defaultPassword).getBytes());
         sysUser.setUserPassword(encryptPassword);
-
-        boolean res = sysUserService.save(sysUser);
-        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
-
-        // 用户角色
-        String[] roleIds = userAddRequest.getRoleIds().split(",");
-        if (roleIds.length > 0) {
-            List<SysUserRole> userRoles = new ArrayList<>();
-            for (String roleId : roleIds) {
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setUserId(sysUser.getId());
-                sysUserRole.setRoleId(Long.parseLong(roleId));
-                userRoles.add(sysUserRole);
-            }
-            sysUserRoleService.saveBatch(userRoles);
-        }
-        return ResultUtils.success(sysUser.getId());
+        return ResultUtils.success(sysUserService.saveUser(sysUser));
     }
 
     @Operation(summary = "删除用户")
@@ -83,9 +64,8 @@ public class UserController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean res = sysUserService.removeById(deleteRequest.getId());
-        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(res);
+        sysUserService.removeUser(deleteRequest.getId());
+        return ResultUtils.success(true);
     }
 
     @Operation(summary = "更新用户")
@@ -96,8 +76,7 @@ public class UserController {
         }
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(userUpdateRequest, sysUser);
-        boolean res = sysUserService.updateById(sysUser);
-        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
+        sysUserService.updateUser(sysUser);
         return ResultUtils.success(true);
     }
 

@@ -2,26 +2,29 @@ package com.tms.web.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tms.web.constant.BmsConstant;
 import com.tms.web.constant.UserConstant;
+import com.tms.web.core.auth.StpKit;
 import com.tms.web.exception.BusinessException;
 import com.tms.web.exception.ErrorCode;
 import com.tms.web.exception.ThrowUtils;
-import com.tms.web.core.auth.StpKit;
 import com.tms.web.mapper.SysUserMapper;
 import com.tms.web.model.dto.user.UserQueryRequest;
 import com.tms.web.model.entity.SysUser;
+import com.tms.web.model.entity.SysUserRole;
 import com.tms.web.model.enums.UserRoleEnum;
 import com.tms.web.model.vo.user.LoginUserVO;
 import com.tms.web.model.vo.user.UserVO;
+import com.tms.web.service.SysUserRoleService;
 import com.tms.web.service.SysUserService;
 import com.tms.web.utils.SqlUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
@@ -32,23 +35,16 @@ import java.util.stream.Collectors;
 /**
  * 用户服务实现
  */
+@Slf4j
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    Logger logger = LoggerFactory.getLogger(SysUserServiceImpl.class);
+    @Resource
+    private SysUserRoleService sysUserRoleService;
 
     @Override
     public long register(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
-        if (StrUtil.hasBlank(userAccount, userPassword, checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
-        }
-        if (userPassword.length() < 5 || checkPassword.length() < 5) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
-        }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
@@ -67,7 +63,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             SysUser sysUser = new SysUser();
             sysUser.setUserAccount(userAccount);
             sysUser.setUserPassword(encryptPassword);
-            sysUser.setUserName("游客123");
             sysUser.setUserRole(UserRoleEnum.USER.getValue());
             boolean saveResult = this.save(sysUser);
             if (!saveResult) {
@@ -80,15 +75,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public LoginUserVO login(String userAccount, String userPassword) {
         // 1. 校验
-        if (StrUtil.hasBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
-        }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
-        }
-        if (userPassword.length() < 5) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
-        }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + userPassword).getBytes());
         // 查询用户是否存在
@@ -98,7 +84,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = this.getOne(queryWrapper);
         // 用户不存在
         if (sysUser == null) {
-            logger.info("user login failed, userAccount cannot match userPassword");
+            log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
@@ -138,6 +124,62 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         StpKit.BMS.getSession().removeTokenSign(UserConstant.USER_LOGIN_STATE);
         StpKit.BMS.logout();
         return true;
+    }
+
+    @Transactional
+    @Override
+    public Long saveUser(SysUser sysUser) {
+        boolean res = this.save(sysUser);
+        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR, "新增用户失败！");
+        String[] roleIds = sysUser.getRoleIds().split(",");
+        if (roleIds.length > 0) {
+            List<SysUserRole> userRoles = new ArrayList<>();
+            for (String roleId : roleIds) {
+                SysUserRole sysUserRole = new SysUserRole();
+                sysUserRole.setUserId(sysUser.getId());
+                sysUserRole.setRoleId(Long.parseLong(roleId));
+                userRoles.add(sysUserRole);
+            }
+            boolean res2 = sysUserRoleService.saveBatch(userRoles);
+            ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联新增用户角色失败！");
+        }
+        return sysUser.getId();
+    }
+
+    @Transactional
+    @Override
+    public void removeUser(Long id) {
+        boolean res = this.removeById(id);
+        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR, "删除用户失败！");
+        QueryWrapper<SysUserRole> query = new QueryWrapper<>();
+        query.lambda().eq(SysUserRole::getUserId, id);
+        boolean res2 = sysUserRoleService.remove(query);
+        ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联删除用户角色失败！");
+    }
+
+    @Override
+    public void updateUser(SysUser sysUser) {
+        boolean res = this.updateById(sysUser);
+        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
+        // 把前端逗号分割的字符串转成数组
+        String[] roleIds = sysUser.getRoleIds().split(",");
+        // 删除用户原来的角色
+        QueryWrapper<SysUserRole> query = new QueryWrapper<>();
+        query.lambda().eq(SysUserRole::getUserId, sysUser.getId());
+        sysUserRoleService.remove(query);
+        // 重新插入
+        if (roleIds.length > 0) {
+            List<SysUserRole> userRoles = new ArrayList<>();
+            for (String roleId : roleIds) {
+                SysUserRole userRole = new SysUserRole();
+                userRole.setUserId(sysUser.getId());
+                userRole.setRoleId(Long.valueOf(roleId));
+                userRoles.add(userRole);
+            }
+            // 保存到用户角色表
+            boolean res2 = sysUserRoleService.saveBatch(userRoles);
+            ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联更新用户角色失败！");
+        }
     }
 
     @Override
@@ -191,4 +233,5 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals("ascend"), sortField);
         return queryWrapper;
     }
+
 }

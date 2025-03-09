@@ -75,7 +75,7 @@ public class RoleController {
         }
         boolean res = sysRoleService.removeById(deleteRequest.getId());
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(res);
+        return ResultUtils.success(true);
     }
 
     @Operation(summary = "分页获取角色")

@@ -1,11 +1,11 @@
 package com.tms.web.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.tms.web.model.dto.user.UserQueryRequest;
 import com.tms.web.model.entity.SysUser;
 import com.tms.web.model.vo.user.LoginUserVO;
 import com.tms.web.model.vo.user.UserVO;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -78,4 +78,25 @@ public interface SysUserService extends IService<SysUser> {
      */
     QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    /**
+     * 保存用户和关联角色
+     *
+     * @param sysUser
+     * @return
+     */
+    Long saveUser(SysUser sysUser);
+
+    /**
+     * 删除用户和关联角色
+     *
+     * @param id
+     */
+    void removeUser(Long id);
+
+    /**
+     * 更新用户和关联角色
+     *
+     * @param sysUser
+     */
+    void updateUser(SysUser sysUser);
 }

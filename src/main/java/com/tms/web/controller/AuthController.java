@@ -1,6 +1,5 @@
 package com.tms.web.controller;
 
-import cn.hutool.core.util.StrUtil;
 import com.tms.web.common.BaseResponse;
 import com.tms.web.common.ResultUtils;
 import com.tms.web.exception.BusinessException;
@@ -14,6 +13,7 @@ import com.tms.web.service.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -32,31 +32,25 @@ public class AuthController {
 
     @Operation(summary = "用户登录")
     @PostMapping("/login")
-    public BaseResponse<LoginUserVO> login(@RequestBody UserLoginRequest userLoginRequest) {
+    public BaseResponse<LoginUserVO> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
-        if (StrUtil.hasBlank(userAccount, userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
         LoginUserVO loginUserVO = sysUserService.login(userAccount, userPassword);
         return ResultUtils.success(loginUserVO);
     }
 
     @Operation(summary = "用户注册")
     @PostMapping("/register")
-    public BaseResponse<Long> register(@RequestBody UserRegisterRequest userRegisterRequest) {
+    public BaseResponse<Long> register(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StrUtil.hasBlank(userAccount, userPassword, checkPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
         long userId = sysUserService.register(userAccount, userPassword, checkPassword);
         return ResultUtils.success(userId);
     }

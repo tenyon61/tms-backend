@@ -96,6 +96,9 @@ public class SysUser implements Serializable {
     @TableLogic
     private Integer isDelete;
 
+    @TableField(exist = false)
+    private String roleIds;
+
     @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

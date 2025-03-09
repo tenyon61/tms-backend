@@ -49,6 +49,8 @@ dependencies {
     }
     // Spring Boot AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
+    // Spring Boot Validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     // Logback
     implementation("ch.qos.logback:logback-classic:${logbackVersion}")
     implementation("ch.qos.logback:logback-core:${logbackVersion}")

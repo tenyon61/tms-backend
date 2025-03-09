@@ -1,6 +1,8 @@
 package com.tms.web.model.dto.user;
 
+import com.tms.web.constant.BmsConstant;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 import java.io.Serial;
@@ -25,9 +27,11 @@ public class UserUpdateMyRequest implements Serializable {
     @Schema(description = "性别")
     private int sex;
 
+    @Pattern(regexp = BmsConstant.REGEX_EMAIL, message = "邮箱格式不正确")
     @Schema(description = "邮箱")
     private String email;
 
+    @Pattern(regexp = BmsConstant.REGEX_PHONE, message = "手机号格式不正确")
     @Schema(description = "手机号")
     private String phone;
 
