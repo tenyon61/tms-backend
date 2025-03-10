@@ -2,7 +2,6 @@ package com.tms.web.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tms.web.common.BaseResponse;
-import com.tms.web.common.DeleteRequest;
 import com.tms.web.common.ResultUtils;
 import com.tms.web.exception.BusinessException;
 import com.tms.web.exception.ErrorCode;
@@ -54,7 +53,7 @@ public class RoleController {
     }
 
     @Operation(summary = "更新角色")
-    @PostMapping("/update")
+    @PutMapping("/update")
     public BaseResponse<Boolean> updateRole(@RequestBody RoleUpdateRequest roleUpdateRequest) {
         if (roleUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -67,12 +66,9 @@ public class RoleController {
     }
 
     @Operation(summary = "删除角色")
-    @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteRole(@RequestBody DeleteRequest deleteRequest) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        boolean res = sysRoleService.removeById(deleteRequest.getId());
+    @DeleteMapping("/delete/{id}")
+    public BaseResponse<Boolean> deleteRole(@PathVariable Long id) {
+        boolean res = sysRoleService.removeById(id);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }

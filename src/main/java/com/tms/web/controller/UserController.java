@@ -2,7 +2,6 @@ package com.tms.web.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tms.web.common.BaseResponse;
-import com.tms.web.common.DeleteRequest;
 import com.tms.web.common.ResultUtils;
 import com.tms.web.constant.BmsConstant;
 import com.tms.web.exception.BusinessException;
@@ -51,24 +50,20 @@ public class UserController {
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(userAddRequest, sysUser);
         // 默认密码 11111
-        String defaultPassword = "11111";
-        String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + defaultPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + "11111").getBytes());
         sysUser.setUserPassword(encryptPassword);
         return ResultUtils.success(sysUserService.saveUser(sysUser));
     }
 
     @Operation(summary = "删除用户")
-    @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        sysUserService.removeUser(deleteRequest.getId());
+    @DeleteMapping("/delete/{id}")
+    public BaseResponse<Boolean> deleteUser(@PathVariable long id) {
+        sysUserService.removeUser(id);
         return ResultUtils.success(true);
     }
 
     @Operation(summary = "更新用户")
-    @PostMapping("/update")
+    @PutMapping("/update")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -129,7 +124,7 @@ public class UserController {
     // endregion
 
     @Operation(summary = "更新个人信息")
-    @PostMapping("/updateMy")
+    @PutMapping("/updateMy")
     public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest) {
         if (userUpdateMyRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -147,5 +142,15 @@ public class UserController {
     @GetMapping("/getUserRoleList")
     public BaseResponse<List<Long>> getUserRoleList(long id) {
         return ResultUtils.success(sysUserService.getRoleList(id));
+    }
+
+    @Operation(summary = "重置密码")
+    @PutMapping("/resetPwd/{id}")
+    public BaseResponse<Boolean> resetPwd(@PathVariable long id) {
+        SysUser sysUser = sysUserService.getById(id);
+        sysUser.setUserPassword(DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + "11111").getBytes()));
+        boolean res = sysUserService.updateById(sysUser);
+        ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR, "密码重置失败");
+        return ResultUtils.success(true);
     }
 }

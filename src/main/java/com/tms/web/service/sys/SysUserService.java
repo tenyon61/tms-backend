@@ -101,8 +101,10 @@ public interface SysUserService extends IService<SysUser> {
     void updateUser(SysUser sysUser);
 
     /**
+     * 获取用户对应角色
      * @param id
      * @return
      */
     List<Long> getRoleList(Long id);
+
 }

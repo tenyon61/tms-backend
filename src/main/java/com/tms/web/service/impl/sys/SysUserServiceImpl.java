@@ -1,5 +1,6 @@
 package com.tms.web.service.impl.sys;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -131,18 +132,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public Long saveUser(SysUser sysUser) {
         boolean res = this.save(sysUser);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR, "新增用户失败！");
-        String[] roleIds = sysUser.getRoleIds().split(",");
-        if (roleIds.length > 0) {
-            List<SysUserRole> userRoles = new ArrayList<>();
-            for (String roleId : roleIds) {
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setUserId(sysUser.getId());
-                sysUserRole.setRoleId(Long.parseLong(roleId));
-                userRoles.add(sysUserRole);
-            }
-            boolean res2 = sysUserRoleService.saveBatch(userRoles);
-            ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联新增用户角色失败！");
+        String roleIdStr = sysUser.getRoleIds();
+        if (StrUtil.isBlank(roleIdStr)) {
+            return sysUser.getId();
         }
+        String[] roleIds = roleIdStr.split(",");
+        List<SysUserRole> userRoles = new ArrayList<>();
+        for (String roleId : roleIds) {
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUserId(sysUser.getId());
+            sysUserRole.setRoleId(Long.parseLong(roleId));
+            userRoles.add(sysUserRole);
+        }
+        boolean res2 = sysUserRoleService.saveBatch(userRoles);
+        ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联新增用户角色失败！");
         return sysUser.getId();
     }
 
@@ -160,25 +163,28 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public void updateUser(SysUser sysUser) {
         boolean res = this.updateById(sysUser);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
-        // 把前端逗号分割的字符串转成数组
-        String[] roleIds = sysUser.getRoleIds().split(",");
         // 删除用户原来的角色
         QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(SysUserRole::getUserId, sysUser.getId());
         sysUserRoleService.remove(queryWrapper);
-        // 重新插入
-        if (roleIds.length > 0) {
-            List<SysUserRole> userRoles = new ArrayList<>();
-            for (String roleId : roleIds) {
-                SysUserRole userRole = new SysUserRole();
-                userRole.setUserId(sysUser.getId());
-                userRole.setRoleId(Long.valueOf(roleId));
-                userRoles.add(userRole);
-            }
-            // 保存到用户角色表
-            boolean res2 = sysUserRoleService.saveBatch(userRoles);
-            ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联更新用户角色失败！");
+        // 把前端逗号分割的字符串转成数组
+        String roleIdStr = sysUser.getRoleIds();
+        if (StrUtil.isBlank(roleIdStr)) {
+            return;
         }
+        String[] roleIds = roleIdStr.split(",");
+        // 重新插入
+        List<SysUserRole> userRoles = new ArrayList<>();
+        for (String roleId : roleIds) {
+            SysUserRole userRole = new SysUserRole();
+            userRole.setUserId(sysUser.getId());
+            userRole.setRoleId(Long.valueOf(roleId));
+            userRoles.add(userRole);
+        }
+        // 保存到用户角色表
+        boolean res2 = sysUserRoleService.saveBatch(userRoles);
+        ThrowUtils.throwIf(!res2, ErrorCode.OPERATION_ERROR, "级联更新用户角色失败！");
+
     }
 
     @Override
