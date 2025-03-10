@@ -10,7 +10,7 @@ import com.tms.web.core.api.MinioApi;
 import com.tms.web.exception.BusinessException;
 import com.tms.web.exception.ErrorCode;
 import com.tms.web.exception.ThrowUtils;
-import com.tms.web.model.dto.file.UploadPictureResult;
+import com.tms.web.model.dto.sys.file.UploadPictureResult;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

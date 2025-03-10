@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tms.web.mapper.sys.SysRoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.tms.web.model.entity.sys.SysRole">
+            <id property="id" column="id" />
+            <result property="roleName" column="roleName" />
+            <result property="type" column="type" />
+            <result property="remark" column="remark" />
+            <result property="createTime" column="createTime" />
+            <result property="updateTime" column="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,roleName,type,remark,createTime,updateTime
+    </sql>
+</mapper>
