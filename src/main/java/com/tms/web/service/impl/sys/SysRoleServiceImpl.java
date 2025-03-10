@@ -1,5 +1,6 @@
 package com.tms.web.service.impl.sys;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,9 +10,16 @@ import com.tms.web.exception.ErrorCode;
 import com.tms.web.mapper.sys.SysRoleMapper;
 import com.tms.web.model.dto.sys.role.RoleQueryRequest;
 import com.tms.web.model.entity.sys.SysRole;
+import com.tms.web.model.entity.sys.SysRole;
+import com.tms.web.model.vo.sys.role.SysRoleVO;
 import com.tms.web.service.sys.SysRoleService;
 import com.tms.web.utils.SqlUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author tenyon
@@ -21,6 +29,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
         implements SysRoleService {
+
+    @Override
+    public SysRoleVO getRoleVO(SysRole sysRole) {
+        if (sysRole == null) {
+            return null;
+        }
+        SysRoleVO sysRoleVO = new SysRoleVO();
+        BeanUtil.copyProperties(sysRole, sysRoleVO);
+        return sysRoleVO;
+    }
+
+    @Override
+    public List<SysRoleVO> getRoleVOList(List<SysRole> sysRoleList) {
+        if (CollectionUtils.isEmpty(sysRoleList)) {
+            return new ArrayList<>();
+        }
+        return sysRoleList.stream().map(this::getRoleVO).collect(Collectors.toList());
+    }
 
     @Override
     public QueryWrapper<SysRole> getQueryWrapper(RoleQueryRequest roleQueryRequest) {

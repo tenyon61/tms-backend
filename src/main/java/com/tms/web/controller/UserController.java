@@ -1,5 +1,6 @@
 package com.tms.web.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tms.web.common.BaseResponse;
 import com.tms.web.common.ResultUtils;
@@ -12,13 +13,12 @@ import com.tms.web.model.dto.sys.user.UserQueryRequest;
 import com.tms.web.model.dto.sys.user.UserUpdateMyRequest;
 import com.tms.web.model.dto.sys.user.UserUpdateRequest;
 import com.tms.web.model.entity.sys.SysUser;
-import com.tms.web.model.vo.sys.user.UserVO;
+import com.tms.web.model.vo.sys.user.SysUserVO;
 import com.tms.web.service.sys.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +48,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(userAddRequest, sysUser);
+        BeanUtil.copyProperties(userAddRequest, sysUser);
         // 默认密码 11111
         String encryptPassword = DigestUtils.md5DigestAsHex((BmsConstant.ENCRYPT_SALT + "11111").getBytes());
         sysUser.setUserPassword(encryptPassword);
@@ -69,7 +69,7 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(userUpdateRequest, sysUser);
+        BeanUtil.copyProperties(userUpdateRequest, sysUser);
         sysUserService.updateUser(sysUser);
         return ResultUtils.success(true);
     }
@@ -87,7 +87,7 @@ public class UserController {
 
     @Operation(summary = "根据 id 获取包装类")
     @GetMapping("/getVO")
-    public BaseResponse<UserVO> getUserVOById(long id) {
+    public BaseResponse<SysUserVO> getUserVOById(long id) {
         BaseResponse<SysUser> response = getUserById(id);
         SysUser sysUser = response.getData();
         return ResultUtils.success(sysUserService.getUserVO(sysUser));
@@ -105,7 +105,7 @@ public class UserController {
 
     @Operation(summary = "分页获取用户封装列表（仅管理员）")
     @PostMapping("/listPageVO")
-    public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest) {
+    public BaseResponse<Page<SysUserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest) {
         if (userQueryRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -115,9 +115,9 @@ public class UserController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<SysUser> userPage = sysUserService.page(new Page<>(current, size),
                 sysUserService.getQueryWrapper(userQueryRequest));
-        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
-        List<UserVO> userVO = sysUserService.getUserVOList(userPage.getRecords());
-        userVOPage.setRecords(userVO);
+        Page<SysUserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
+        List<SysUserVO> sysUserVO = sysUserService.getUserVOList(userPage.getRecords());
+        userVOPage.setRecords(sysUserVO);
         return ResultUtils.success(userVOPage);
     }
 
@@ -131,7 +131,7 @@ public class UserController {
         }
         SysUser loginSysUser = sysUserService.getLoginUser();
         SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(userUpdateMyRequest, sysUser);
+        BeanUtil.copyProperties(userUpdateMyRequest, sysUser);
         sysUser.setId(loginSysUser.getId());
         boolean res = sysUserService.updateById(sysUser);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);

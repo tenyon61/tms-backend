@@ -17,13 +17,12 @@ import com.tms.web.model.entity.sys.SysUser;
 import com.tms.web.model.entity.sys.SysUserRole;
 import com.tms.web.model.enums.sys.UserRoleEnum;
 import com.tms.web.model.vo.sys.user.LoginUserVO;
-import com.tms.web.model.vo.sys.user.UserVO;
+import com.tms.web.model.vo.sys.user.SysUserVO;
 import com.tms.web.service.sys.SysUserRoleService;
 import com.tms.web.service.sys.SysUserService;
 import com.tms.web.utils.SqlUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -200,22 +199,22 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             return null;
         }
         LoginUserVO loginUserVO = new LoginUserVO();
-        BeanUtils.copyProperties(sysUser, loginUserVO);
+        BeanUtil.copyProperties(sysUser, loginUserVO);
         return loginUserVO;
     }
 
     @Override
-    public UserVO getUserVO(SysUser sysUser) {
+    public SysUserVO getUserVO(SysUser sysUser) {
         if (sysUser == null) {
             return null;
         }
-        UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(sysUser, userVO);
-        return userVO;
+        SysUserVO sysUserVO = new SysUserVO();
+        BeanUtil.copyProperties(sysUser, sysUserVO);
+        return sysUserVO;
     }
 
     @Override
-    public List<UserVO> getUserVOList(List<SysUser> sysUserList) {
+    public List<SysUserVO> getUserVOList(List<SysUser> sysUserList) {
         if (CollectionUtils.isEmpty(sysUserList)) {
             return new ArrayList<>();
         }

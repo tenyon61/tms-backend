@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Data
 @Schema(description = "用户视图（脱敏）")
-public class UserVO implements Serializable {
+public class SysUserVO implements Serializable {
 
     @Schema(description = "id")
     private Long id;

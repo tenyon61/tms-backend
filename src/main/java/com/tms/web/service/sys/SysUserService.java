@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.tms.web.model.dto.sys.user.UserQueryRequest;
 import com.tms.web.model.entity.sys.SysUser;
 import com.tms.web.model.vo.sys.user.LoginUserVO;
-import com.tms.web.model.vo.sys.user.UserVO;
+import com.tms.web.model.vo.sys.user.SysUserVO;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ public interface SysUserService extends IService<SysUser> {
      * @param sysUser
      * @return
      */
-    UserVO getUserVO(SysUser sysUser);
+    SysUserVO getUserVO(SysUser sysUser);
 
     /**
      * 获取脱敏的用户信息
@@ -68,7 +68,7 @@ public interface SysUserService extends IService<SysUser> {
      * @param sysUserList
      * @return
      */
-    List<UserVO> getUserVOList(List<SysUser> sysUserList);
+    List<SysUserVO> getUserVOList(List<SysUser> sysUserList);
 
     /**
      * 获取查询条件

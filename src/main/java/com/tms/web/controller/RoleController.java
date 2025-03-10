@@ -1,5 +1,6 @@
 package com.tms.web.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tms.web.common.BaseResponse;
 import com.tms.web.common.ResultUtils;
@@ -11,12 +12,12 @@ import com.tms.web.model.dto.sys.role.RoleQueryRequest;
 import com.tms.web.model.dto.sys.role.RoleSelectItem;
 import com.tms.web.model.dto.sys.role.RoleUpdateRequest;
 import com.tms.web.model.entity.sys.SysRole;
+import com.tms.web.model.vo.sys.role.SysRoleVO;
 import com.tms.web.service.sys.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class RoleController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         SysRole sysRole = new SysRole();
-        BeanUtils.copyProperties(roleAddRequest, sysRole);
+        BeanUtil.copyProperties(roleAddRequest, sysRole);
         boolean res = sysRoleService.save(sysRole);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(sysRole.getId());
@@ -59,7 +60,7 @@ public class RoleController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         SysRole sysRole = new SysRole();
-        BeanUtils.copyProperties(roleUpdateRequest, sysRole);
+        BeanUtil.copyProperties(roleUpdateRequest, sysRole);
         boolean res = sysRoleService.updateById(sysRole);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
@@ -74,13 +75,14 @@ public class RoleController {
     }
 
     @Operation(summary = "分页获取角色")
-    @PostMapping("/listPage")
-    public BaseResponse<Page<SysRole>> listRoleByPage(@RequestBody RoleQueryRequest roleQueryRequest) {
+    @PostMapping("/listPageVO")
+    public BaseResponse<Page<SysRoleVO>> listRoleVOByPage(@RequestBody RoleQueryRequest roleQueryRequest) {
         long current = roleQueryRequest.getCurrent();
         long size = roleQueryRequest.getPageSize();
-        Page<SysRole> rolePage = sysRoleService.page(new Page<>(current, size),
-                sysRoleService.getQueryWrapper(roleQueryRequest));
-        return ResultUtils.success(rolePage);
+        Page<SysRole> rolePage = sysRoleService.page(new Page<>(current, size), sysRoleService.getQueryWrapper(roleQueryRequest));
+        Page<SysRoleVO> roleVOPage = new Page<>(current, size, rolePage.getTotal());
+        roleVOPage.setRecords(sysRoleService.getRoleVOList(rolePage.getRecords()));
+        return ResultUtils.success(roleVOPage);
     }
     // endregion
 
