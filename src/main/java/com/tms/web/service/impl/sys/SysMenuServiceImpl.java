@@ -85,9 +85,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         List<SysMenuVO> list = getMenuVOList(this.list(lambdaQueryWrapper));
         // 组装根节点
         SysMenuVO menuVO = new SysMenuVO();
-        menuVO.setParentId(-1L);
         menuVO.setTitle("根节点");
         menuVO.setLabel("根节点");
+        menuVO.setParentId(-1L);
         menuVO.setId(0L);
         menuVO.setValue(0L);
         list.add(menuVO);

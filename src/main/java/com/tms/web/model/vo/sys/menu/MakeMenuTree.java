@@ -1,7 +1,5 @@
 package com.tms.web.model.vo.sys.menu;
 
-import com.tms.web.model.entity.sys.SysMenu;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,15 +11,15 @@ import java.util.stream.Collectors;
  */
 public class MakeMenuTree {
 
-    public static List<SysMenuVO> makeTreeVO(List<SysMenuVO> menuList, long pid) {
+    public static List<SysMenuVO> makeTreeVO(List<SysMenuVO> menuVOList, long pid) {
         // 处理空列表并过滤空元素
-        List<SysMenuVO> safeMenuList = Optional.ofNullable(menuList).orElseGet(ArrayList::new)
+        List<SysMenuVO> safemenuVOList = Optional.ofNullable(menuVOList).orElseGet(ArrayList::new)
                 .stream()
                 .filter(Objects::nonNull)
                 .toList();
 
         // 构建父节点到子节点的映射
-        Map<Long, List<SysMenuVO>> parentMap = safeMenuList.stream()
+        Map<Long, List<SysMenuVO>> parentMap = safemenuVOList.stream()
                 .collect(Collectors.groupingBy(SysMenuVO::getParentId));
 
         // 递归构建树结构
