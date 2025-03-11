@@ -81,7 +81,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     public List<SysMenuVO> getParentMenuList() {
         List<Integer> menuTypeList = Arrays.asList(0, 1);
         LambdaQueryWrapper<SysMenu> lambdaQueryWrapper = Wrappers.lambdaQuery();
-        lambdaQueryWrapper.in(SysMenu::getType, menuTypeList).orderByDesc(SysMenu::getOrderNum);
+        lambdaQueryWrapper.in(SysMenu::getType, menuTypeList).orderByAsc(SysMenu::getOrderNum);
         List<SysMenuVO> list = getMenuVOList(this.list(lambdaQueryWrapper));
         // 组装根节点
         SysMenuVO menuVO = new SysMenuVO();
