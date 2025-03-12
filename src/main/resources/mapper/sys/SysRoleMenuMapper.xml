@@ -5,12 +5,19 @@
 <mapper namespace="com.tms.web.mapper.sys.SysRoleMenuMapper">
 
     <resultMap id="BaseResultMap" type="com.tms.web.model.entity.sys.SysRoleMenu">
-            <id property="id" column="id" />
-            <result property="roleId" column="roleId" />
-            <result property="menuId" column="menuId" />
+        <id property="id" column="id"/>
+        <result property="roleId" column="roleId"/>
+        <result property="menuId" column="menuId"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,roleId,menuId
+        id
+        ,roleId,menuId
     </sql>
+    <insert id="assignRoleMenu">
+        insert into sys_role_menu(roleId,menuId)values
+        <foreach collection="menuIds" item="menuId" index="index" separator=",">
+            (#{roleId},#{menuId})
+        </foreach>
+    </insert>
 </mapper>

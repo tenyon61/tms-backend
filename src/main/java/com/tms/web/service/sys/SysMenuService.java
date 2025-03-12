@@ -2,7 +2,6 @@ package com.tms.web.service.sys;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.tms.web.common.BaseResponse;
 import com.tms.web.model.dto.sys.menu.MenuQueryRequest;
 import com.tms.web.model.entity.sys.SysMenu;
 import com.tms.web.model.vo.sys.menu.SysMenuVO;
@@ -47,5 +46,21 @@ public interface SysMenuService extends IService<SysMenu> {
      * @return
      */
     List<SysMenuVO> getParentMenuList();
+
+    /**
+     * 根据用户 id获取菜单
+     *
+     * @param userId
+     * @return
+     */
+    List<SysMenuVO> getMenuByUserId(Long userId);
+
+    /**
+     * 根据角色 id获取菜单
+     *
+     * @param roleId
+     * @return
+     */
+    List<SysMenuVO> getMenuByRoleId(Long roleId);
 
 }

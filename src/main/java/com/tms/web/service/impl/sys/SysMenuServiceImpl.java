@@ -95,6 +95,18 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         return MakeMenuTree.makeTreeVO(list, -1L);
     }
 
+    @Override
+    public List<SysMenuVO> getMenuByUserId(Long userId) {
+        List<SysMenu> menuList = baseMapper.getMenuByUserId(userId);
+        return getMenuVOList(menuList);
+    }
+
+    @Override
+    public List<SysMenuVO> getMenuByRoleId(Long roleId) {
+        List<SysMenu> menuList = baseMapper.getMenuByRoleId(roleId);
+        return getMenuVOList(menuList);
+    }
+
 }
 
 

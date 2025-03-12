@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tms.web.model.dto.sys.user.UserQueryRequest;
 import com.tms.web.model.entity.sys.SysUser;
+import com.tms.web.model.vo.sys.menu.AssignTreeVO;
 import com.tms.web.model.vo.sys.user.LoginUserVO;
 import com.tms.web.model.vo.sys.user.SysUserVO;
 
@@ -106,5 +107,16 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     List<Long> getRoleList(Long id);
+
+
+
+    /**
+     * 获取分配的资源树
+     *
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    AssignTreeVO getAssignTreeVO(Long userId, Long roleId);
 
 }

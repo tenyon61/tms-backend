@@ -1,9 +1,12 @@
 package com.tms.web.service.impl.sys;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tms.web.constant.BmsConstant;
 import com.tms.web.constant.UserConstant;
@@ -16,8 +19,12 @@ import com.tms.web.model.dto.sys.user.UserQueryRequest;
 import com.tms.web.model.entity.sys.SysUser;
 import com.tms.web.model.entity.sys.SysUserRole;
 import com.tms.web.model.enums.sys.UserRoleEnum;
+import com.tms.web.model.vo.sys.menu.AssignTreeVO;
+import com.tms.web.model.vo.sys.menu.MakeMenuTree;
+import com.tms.web.model.vo.sys.menu.SysMenuVO;
 import com.tms.web.model.vo.sys.user.LoginUserVO;
 import com.tms.web.model.vo.sys.user.SysUserVO;
+import com.tms.web.service.sys.SysMenuService;
 import com.tms.web.service.sys.SysUserRoleService;
 import com.tms.web.service.sys.SysUserService;
 import com.tms.web.utils.SqlUtils;
@@ -30,6 +37,7 @@ import org.springframework.util.DigestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +49,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Resource
     private SysUserRoleService sysUserRoleService;
+
+    @Resource
+    private SysMenuService sysMenuService;
 
     @Override
     public long register(String userAccount, String userPassword, String checkPassword) {
@@ -153,18 +164,19 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public void removeUser(Long id) {
         boolean res = this.removeById(id);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR, "删除用户失败！");
-        QueryWrapper<SysUserRole> query = new QueryWrapper<>();
-        query.lambda().eq(SysUserRole::getUserId, id);
-        sysUserRoleService.remove(query);
+        LambdaQueryWrapper<SysUserRole> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(SysUserRole::getUserId, id);
+        sysUserRoleService.remove(queryWrapper);
     }
 
+    @Transactional
     @Override
     public void updateUser(SysUser sysUser) {
         boolean res = this.updateById(sysUser);
         ThrowUtils.throwIf(!res, ErrorCode.OPERATION_ERROR);
         // 删除用户原来的角色
-        QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(SysUserRole::getUserId, sysUser.getId());
+        LambdaQueryWrapper<SysUserRole> queryWrapper = Wrappers.lambdaQuery();
+        queryWrapper.eq(SysUserRole::getUserId, sysUser.getId());
         sysUserRoleService.remove(queryWrapper);
         // 把前端逗号分割的字符串转成数组
         String roleIdStr = sysUser.getRoleIds();
@@ -219,6 +231,30 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             return new ArrayList<>();
         }
         return sysUserList.stream().map(this::getUserVO).collect(Collectors.toList());
+    }
+
+    @Override
+    public AssignTreeVO getAssignTreeVO(Long userId, Long roleId) {
+        SysUser user = this.getById(userId);
+        List<SysMenuVO> menuList;
+        if (StrUtil.isNotBlank(user.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole())) {
+            menuList = sysMenuService.getMenuVOList(sysMenuService.list());
+        } else {
+            menuList = sysMenuService.getMenuByUserId(userId);
+        }
+        List<SysMenuVO> treeList = MakeMenuTree.makeTreeVO(menuList, 0L);
+        // 查询原来的菜单
+        List<SysMenuVO> roleMenuList = sysMenuService.getMenuByRoleId(roleId);
+        List<Long> ids = new ArrayList<>();
+        if (CollUtil.isNotEmpty(roleMenuList)) {
+            roleMenuList.stream().filter(ObjectUtil::isNotNull).forEach(roleMenu -> {
+                ids.add(roleMenu.getId());
+            });
+        }
+        AssignTreeVO assignTreeVO = new AssignTreeVO();
+        assignTreeVO.setCheckList(ids.toArray());
+        assignTreeVO.setMenuList(treeList);
+        return assignTreeVO;
     }
 
     @Override

@@ -2,6 +2,9 @@ package com.tms.web.mapper.sys;
 
 import com.tms.web.model.entity.sys.SysMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author tenyon
@@ -11,6 +14,14 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
+    /**
+     * 根据用户 id查询菜单
+     * @param userId
+     * @return
+     */
+    List<SysMenu> getMenuByUserId(@Param("userId") Long userId);
+
+    List<SysMenu> getMenuByRoleId(@Param("roleId") Long roleId);
 }
 
 

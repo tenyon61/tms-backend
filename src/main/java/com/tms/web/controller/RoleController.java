@@ -11,12 +11,15 @@ import com.tms.web.model.dto.sys.role.RoleAddRequest;
 import com.tms.web.model.dto.sys.role.RoleQueryRequest;
 import com.tms.web.model.dto.sys.role.RoleSelectItem;
 import com.tms.web.model.dto.sys.role.RoleUpdateRequest;
+import com.tms.web.model.dto.sys.rolemenu.AssignRoleMenuRequest;
 import com.tms.web.model.entity.sys.SysRole;
 import com.tms.web.model.vo.sys.role.SysRoleVO;
+import com.tms.web.service.sys.SysRoleMenuService;
 import com.tms.web.service.sys.SysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +40,8 @@ public class RoleController {
 
     @Resource
     private SysRoleService sysRoleService;
+    @Resource
+    private SysRoleMenuService sysRoleMenuService;
 
     // region 增删改查
 
@@ -98,5 +103,15 @@ public class RoleController {
             return item;
         }).collect(Collectors.toList());
         return ResultUtils.success(result);
+    }
+
+    @Operation(summary = "分配角色资源")
+    @PostMapping("/assignRoleMenu")
+    public BaseResponse<Boolean> assignRoleMenu(@Valid @RequestBody AssignRoleMenuRequest assignRoleMenuRequest) {
+        if (assignRoleMenuRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        sysRoleMenuService.assignRoleMenu(assignRoleMenuRequest.getRoleId(), assignRoleMenuRequest.getMenuIds());
+        return ResultUtils.success(true);
     }
 }
