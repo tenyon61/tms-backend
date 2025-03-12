@@ -87,17 +87,16 @@ public class MenuController {
 
     @Operation(summary = "获取菜单树")
     @GetMapping("/getMenuList")
-    public BaseResponse<List<SysMenuVO>> getMenuList() {
+    public BaseResponse<List<SysMenu>> getMenuList() {
         LambdaQueryWrapper<SysMenu> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.orderByDesc(SysMenu::getOrderNum);
+        queryWrapper.orderByAsc(SysMenu::getOrderNum);
         List<SysMenu> menuList = sysMenuService.list(queryWrapper);
-        List<SysMenuVO> menuVOList = sysMenuService.getMenuVOList(menuList);
-        return ResultUtils.success(MakeMenuTree.makeTreeVO(menuVOList, 0L));
+        return ResultUtils.success(MakeMenuTree.makeTree(menuList, 0L));
     }
 
     @Operation(summary = "获取上级菜单树")
     @GetMapping("/getParentMenuList")
-    public BaseResponse<List<SysMenuVO>> getParentMenuList() {
+    public BaseResponse<List<SysMenu>> getParentMenuList() {
         return ResultUtils.success(sysMenuService.getParentMenuList());
     }
 }

@@ -16,6 +16,7 @@ import com.tms.web.exception.ErrorCode;
 import com.tms.web.exception.ThrowUtils;
 import com.tms.web.mapper.sys.SysUserMapper;
 import com.tms.web.model.dto.sys.user.UserQueryRequest;
+import com.tms.web.model.entity.sys.SysMenu;
 import com.tms.web.model.entity.sys.SysUser;
 import com.tms.web.model.entity.sys.SysUserRole;
 import com.tms.web.model.enums.sys.UserRoleEnum;
@@ -236,15 +237,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public AssignTreeVO getAssignTreeVO(Long userId, Long roleId) {
         SysUser user = this.getById(userId);
-        List<SysMenuVO> menuList;
+        List<SysMenu> menuList;
         if (StrUtil.isNotBlank(user.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole())) {
-            menuList = sysMenuService.getMenuVOList(sysMenuService.list());
+            menuList = sysMenuService.list();
         } else {
             menuList = sysMenuService.getMenuByUserId(userId);
         }
-        List<SysMenuVO> treeList = MakeMenuTree.makeTreeVO(menuList, 0L);
+        List<SysMenu> treeList = MakeMenuTree.makeTree(menuList, 0L);
         // 查询原来的菜单
-        List<SysMenuVO> roleMenuList = sysMenuService.getMenuByRoleId(roleId);
+        List<SysMenu> roleMenuList = sysMenuService.getMenuByRoleId(roleId);
         List<Long> ids = new ArrayList<>();
         if (CollUtil.isNotEmpty(roleMenuList)) {
             roleMenuList.stream().filter(ObjectUtil::isNotNull).forEach(roleMenu -> {

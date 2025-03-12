@@ -1,5 +1,6 @@
 package com.tms.web.model.vo.sys.menu;
 
+import com.tms.web.model.entity.sys.SysMenu;
 import lombok.Data;
 
 import java.util.List;
@@ -13,6 +14,6 @@ import java.util.List;
 
 @Data
 public class AssignTreeVO {
-    private List<SysMenuVO> menuList;
+    private List<SysMenu> menuList;
     private Object[] checkList;
 }

@@ -86,6 +86,16 @@ public class SysMenu implements Serializable {
      */
     private Date updateTime;
 
+    @TableField(exist = false)
+    private List<SysMenu> children = new ArrayList<>();
+
+    @TableField(exist = false)
+    private long value;
+
+    @TableField(exist = false)
+    private String label;
+
+
     @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

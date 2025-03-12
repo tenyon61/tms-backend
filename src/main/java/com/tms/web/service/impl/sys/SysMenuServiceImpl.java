@@ -78,33 +78,31 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     @Override
-    public List<SysMenuVO> getParentMenuList() {
+    public List<SysMenu> getParentMenuList() {
         List<Integer> menuTypeList = Arrays.asList(0, 1);
         LambdaQueryWrapper<SysMenu> lambdaQueryWrapper = Wrappers.lambdaQuery();
         lambdaQueryWrapper.in(SysMenu::getType, menuTypeList).orderByAsc(SysMenu::getOrderNum);
-        List<SysMenuVO> list = getMenuVOList(this.list(lambdaQueryWrapper));
+        List<SysMenu> list = this.list(lambdaQueryWrapper);
         // 组装根节点
-        SysMenuVO menuVO = new SysMenuVO();
-        menuVO.setTitle("根节点");
-        menuVO.setLabel("根节点");
-        menuVO.setParentId(-1L);
-        menuVO.setId(0L);
-        menuVO.setValue(0L);
-        list.add(menuVO);
+        SysMenu menu = new SysMenu();
+        menu.setTitle("根节点");
+        menu.setLabel("根节点");
+        menu.setParentId(-1L);
+        menu.setId(0L);
+        menu.setValue(0L);
+        list.add(menu);
         // 组装树
-        return MakeMenuTree.makeTreeVO(list, -1L);
+        return MakeMenuTree.makeTree(list, -1L);
     }
 
     @Override
-    public List<SysMenuVO> getMenuByUserId(Long userId) {
-        List<SysMenu> menuList = baseMapper.getMenuByUserId(userId);
-        return getMenuVOList(menuList);
+    public List<SysMenu> getMenuByUserId(Long userId) {
+        return baseMapper.getMenuByUserId(userId);
     }
 
     @Override
-    public List<SysMenuVO> getMenuByRoleId(Long roleId) {
-        List<SysMenu> menuList = baseMapper.getMenuByRoleId(roleId);
-        return getMenuVOList(menuList);
+    public List<SysMenu> getMenuByRoleId(Long roleId) {
+        return baseMapper.getMenuByRoleId(roleId);
     }
 
 }

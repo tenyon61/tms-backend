@@ -45,7 +45,7 @@ public interface SysMenuService extends IService<SysMenu> {
      *
      * @return
      */
-    List<SysMenuVO> getParentMenuList();
+    List<SysMenu> getParentMenuList();
 
     /**
      * 根据用户 id获取菜单
@@ -53,7 +53,7 @@ public interface SysMenuService extends IService<SysMenu> {
      * @param userId
      * @return
      */
-    List<SysMenuVO> getMenuByUserId(Long userId);
+    List<SysMenu> getMenuByUserId(Long userId);
 
     /**
      * 根据角色 id获取菜单
@@ -61,6 +61,6 @@ public interface SysMenuService extends IService<SysMenu> {
      * @param roleId
      * @return
      */
-    List<SysMenuVO> getMenuByRoleId(Long roleId);
+    List<SysMenu> getMenuByRoleId(Long roleId);
 
 }
