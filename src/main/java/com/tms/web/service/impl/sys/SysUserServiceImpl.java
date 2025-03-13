@@ -1,5 +1,6 @@
 package com.tms.web.service.impl.sys;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -24,6 +25,7 @@ import com.tms.web.model.vo.sys.menu.AssignTreeVO;
 import com.tms.web.model.vo.sys.menu.MakeMenuTree;
 import com.tms.web.model.vo.sys.menu.SysMenuVO;
 import com.tms.web.model.vo.sys.user.LoginUserVO;
+import com.tms.web.model.vo.sys.user.SingleUserVO;
 import com.tms.web.model.vo.sys.user.SysUserVO;
 import com.tms.web.service.sys.SysMenuService;
 import com.tms.web.service.sys.SysUserRoleService;
@@ -39,6 +41,7 @@ import org.springframework.util.DigestUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -116,7 +119,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
         Object userObj = StpKit.BMS.getSession().get(UserConstant.USER_LOGIN_STATE);
         SysUser currentSysUser = (SysUser) userObj;
-        ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
         if (currentSysUser == null || currentSysUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
@@ -131,7 +133,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public boolean logout() {
-        ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR);
+        ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR, "暂未登录");
         // 移除登录态
         StpKit.BMS.getSession().removeTokenSign(UserConstant.USER_LOGIN_STATE);
         StpKit.BMS.logout();
@@ -213,6 +215,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtil.copyProperties(sysUser, loginUserVO);
+        // 组装token
+        SaTokenInfo tokenInfo = StpKit.BMS.getTokenInfo();
+        loginUserVO.setToken(tokenInfo.tokenValue);
         return loginUserVO;
     }
 
@@ -256,6 +261,31 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         assignTreeVO.setCheckList(ids.toArray());
         assignTreeVO.setMenuList(treeList);
         return assignTreeVO;
+    }
+
+    @Override
+    public SingleUserVO getSingleUser(Long id) {
+        SysUser user = this.getById(id);
+        List<SysMenu> menuList;
+        if (StrUtil.isNotBlank(user.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole())) {
+            menuList = sysMenuService.list();
+        } else {
+            menuList = sysMenuService.getMenuByUserId(id);
+        }
+        // 获取菜单的code
+        List<String> collect = Optional.ofNullable(menuList).orElse(new ArrayList<>())
+                .stream()
+                .filter(item -> ObjectUtil.isNotNull(item) && StrUtil.isNotBlank(item.getCode()))
+                .map(SysMenu::getCode)
+                .toList();
+        // 转换为数组
+        //String[] strings = collect.toArray(new String[collect.size()]);
+        // 设置返回值
+        SingleUserVO singleUserVO = new SingleUserVO();
+        singleUserVO.setUserName(user.getUserName());
+        singleUserVO.setId(id);
+        singleUserVO.setPermissions(collect.toArray());
+        return singleUserVO;
     }
 
     @Override

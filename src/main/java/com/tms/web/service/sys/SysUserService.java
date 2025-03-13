@@ -6,6 +6,7 @@ import com.tms.web.model.dto.sys.user.UserQueryRequest;
 import com.tms.web.model.entity.sys.SysUser;
 import com.tms.web.model.vo.sys.menu.AssignTreeVO;
 import com.tms.web.model.vo.sys.user.LoginUserVO;
+import com.tms.web.model.vo.sys.user.SingleUserVO;
 import com.tms.web.model.vo.sys.user.SysUserVO;
 
 import java.util.List;
@@ -103,11 +104,11 @@ public interface SysUserService extends IService<SysUser> {
 
     /**
      * 获取用户对应角色
+     *
      * @param id
      * @return
      */
     List<Long> getRoleList(Long id);
-
 
 
     /**
@@ -119,4 +120,11 @@ public interface SysUserService extends IService<SysUser> {
      */
     AssignTreeVO getAssignTreeVO(Long userId, Long roleId);
 
+    /**
+     * 获取单用户信息
+     *
+     * @param id
+     * @return
+     */
+    SingleUserVO getSingleUser(Long id);
 }

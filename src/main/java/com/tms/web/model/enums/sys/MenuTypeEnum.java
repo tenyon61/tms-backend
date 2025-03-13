@@ -34,7 +34,7 @@ public enum MenuTypeEnum {
     }
 
 
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 

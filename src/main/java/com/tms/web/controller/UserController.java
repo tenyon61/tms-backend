@@ -15,6 +15,7 @@ import com.tms.web.model.dto.sys.user.UserUpdateMyRequest;
 import com.tms.web.model.dto.sys.user.UserUpdateRequest;
 import com.tms.web.model.entity.sys.SysUser;
 import com.tms.web.model.vo.sys.menu.AssignTreeVO;
+import com.tms.web.model.vo.sys.user.SingleUserVO;
 import com.tms.web.model.vo.sys.user.SysUserVO;
 import com.tms.web.service.sys.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -163,5 +164,11 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         return ResultUtils.success(sysUserService.getAssignTreeVO(assignTreeRequest.getUserId(), assignTreeRequest.getRoleId()));
+    }
+
+    @Operation(summary = "获取单用户信息")
+    @GetMapping("/getUserInfo")
+    public BaseResponse<SingleUserVO> getSingleUser(@RequestParam Long id) {
+        return ResultUtils.success(sysUserService.getSingleUser(id));
     }
 }

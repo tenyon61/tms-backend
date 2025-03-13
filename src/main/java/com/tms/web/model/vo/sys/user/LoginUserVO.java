@@ -1,5 +1,6 @@
 package com.tms.web.model.vo.sys.user;
 
+import com.tms.web.model.entity.sys.SysUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,9 +12,6 @@ import java.util.Date;
 @Schema(description = "已登录用户信息（脱敏）")
 public class LoginUserVO implements Serializable {
 
-    /**
-     * 用户 id
-     */
     @Schema(description = "id")
     private Long id;
 
@@ -23,23 +21,8 @@ public class LoginUserVO implements Serializable {
     @Schema(description = "用户头像")
     private String userAvatar;
 
-    @Schema(description = "用户简介")
-    private String userProfile;
-
-    @Schema(description = "用户角色")
-    private String userRole;
-
-    @Schema(description = "会员编号")
-    private Long vipNumber;
-
-    @Schema(description = "编辑时间")
-    private Date editTime;
-
-    @Schema(description = "创建时间")
-    private Date createTime;
-
-    @Schema(description = "更新时间")
-    private Date updateTime;
+    @Schema(description = "令牌")
+    private String token;
 
     @Serial
     private static final long serialVersionUID = 1L;

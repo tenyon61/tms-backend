@@ -3,6 +3,7 @@ package com.tms.web.config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2024/5/25
  */
 @Configuration
-//@MapperScan("com.tms.web.mapper")
+@MapperScan("com.tms.web.mapper")
 public class MybatisPlusConfig {
 
     /**

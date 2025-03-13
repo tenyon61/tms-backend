@@ -17,7 +17,6 @@ import java.net.UnknownHostException;
 
 // 如需开启 Redis，须移除 exclude = {RedisAutoConfiguration.class}
 @SpringBootApplication
-@MapperScan("com.tms.web.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
 public class WebApplication {
