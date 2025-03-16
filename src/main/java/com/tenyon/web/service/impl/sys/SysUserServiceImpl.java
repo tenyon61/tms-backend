@@ -149,6 +149,20 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         // 组装token
         SaTokenInfo tokenInfo = StpKit.BMS.getTokenInfo();
         loginUserVO.setToken(tokenInfo.tokenValue);
+        // 组装权限
+        List<SysMenu> menuList;
+        if (StrUtil.isNotBlank(sysUser.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(sysUser.getUserRole())) {
+            menuList = sysMenuService.list();
+        } else {
+            menuList = sysMenuService.getMenuByUserId(sysUser.getId());
+        }
+        // 获取菜单的code
+        List<String> collect = Optional.ofNullable(menuList).orElse(new ArrayList<>())
+                .stream()
+                .filter(item -> ObjectUtil.isNotNull(item) && StrUtil.isNotBlank(item.getCode()))
+                .map(SysMenu::getCode)
+                .toList();
+        loginUserVO.setPermissions(collect);
         return loginUserVO;
     }
 
@@ -286,30 +300,30 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return assignTreeVO;
     }
 
-    @Override
-    public SingleUserVO getSingleUser(Long id) {
-        SysUser user = this.getById(id);
-        List<SysMenu> menuList;
-        if (StrUtil.isNotBlank(user.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole())) {
-            menuList = sysMenuService.list();
-        } else {
-            menuList = sysMenuService.getMenuByUserId(id);
-        }
-        // 获取菜单的code
-        List<String> collect = Optional.ofNullable(menuList).orElse(new ArrayList<>())
-                .stream()
-                .filter(item -> ObjectUtil.isNotNull(item) && StrUtil.isNotBlank(item.getCode()))
-                .map(SysMenu::getCode)
-                .toList();
-        // 转换为数组
-        //String[] strings = collect.toArray(new String[collect.size()]);
-        // 设置返回值
-        SingleUserVO singleUserVO = new SingleUserVO();
-        singleUserVO.setUserName(user.getUserName());
-        singleUserVO.setId(id);
-        singleUserVO.setPermissions(collect.toArray());
-        return singleUserVO;
-    }
+//    @Override
+//    public SingleUserVO getSingleUser(Long id) {
+//        SysUser user = this.getById(id);
+//        List<SysMenu> menuList;
+//        if (StrUtil.isNotBlank(user.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole())) {
+//            menuList = sysMenuService.list();
+//        } else {
+//            menuList = sysMenuService.getMenuByUserId(id);
+//        }
+//        // 获取菜单的code
+//        List<String> collect = Optional.ofNullable(menuList).orElse(new ArrayList<>())
+//                .stream()
+//                .filter(item -> ObjectUtil.isNotNull(item) && StrUtil.isNotBlank(item.getCode()))
+//                .map(SysMenu::getCode)
+//                .toList();
+//        // 转换为数组
+//        //String[] strings = collect.toArray(new String[collect.size()]);
+//        // 设置返回值
+//        SingleUserVO singleUserVO = new SingleUserVO();
+//        singleUserVO.setUserName(user.getUserName());
+//        singleUserVO.setId(id);
+//        singleUserVO.setPermissions(collect.toArray());
+//        return singleUserVO;
+//    }
 
     @Override
     public List<RouterVO> getAuthMenuList(long userId) {

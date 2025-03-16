@@ -121,13 +121,13 @@ public interface SysUserService extends IService<SysUser> {
      */
     AssignTreeVO getAssignTreeVO(Long userId, Long roleId);
 
-    /**
-     * 获取单用户信息
-     *
-     * @param id
-     * @return
-     */
-    SingleUserVO getSingleUser(Long id);
+//    /**
+//     * 获取单用户信息
+//     *
+//     * @param id
+//     * @return
+//     */
+//    SingleUserVO getSingleUser(Long id);
 
     /**
      * 获取权限路由菜单

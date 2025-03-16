@@ -166,9 +166,9 @@ public class UserController {
         return ResultUtils.success(sysUserService.getAssignTreeVO(assignTreeRequest.getUserId(), assignTreeRequest.getRoleId()));
     }
 
-    @Operation(summary = "获取单用户信息")
-    @GetMapping("/getUserInfo")
-    public BaseResponse<SingleUserVO> getSingleUser(@RequestParam Long id) {
-        return ResultUtils.success(sysUserService.getSingleUser(id));
-    }
+//    @Operation(summary = "获取单用户信息")
+//    @GetMapping("/getUserInfo")
+//    public BaseResponse<SingleUserVO> getSingleUser(@RequestParam Long id) {
+//        return ResultUtils.success(sysUserService.getSingleUser(id));
+//    }
 }

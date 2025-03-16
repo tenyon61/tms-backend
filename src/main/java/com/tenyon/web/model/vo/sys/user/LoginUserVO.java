@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Schema(description = "已登录用户信息（脱敏）")
@@ -21,6 +22,9 @@ public class LoginUserVO implements Serializable {
 
     @Schema(description = "令牌")
     private String token;
+
+    @Schema(description = "权限集合")
+    private List<String> permissions;
 
     @Serial
     private static final long serialVersionUID = 1L;
