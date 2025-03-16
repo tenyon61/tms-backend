@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.tenyon.web.model.dto.sys.user.UserQueryRequest;
 import com.tenyon.web.model.entity.sys.SysUser;
 import com.tenyon.web.model.vo.sys.menu.AssignTreeVO;
+import com.tenyon.web.model.vo.sys.menu.RouterVO;
 import com.tenyon.web.model.vo.sys.user.LoginUserVO;
 import com.tenyon.web.model.vo.sys.user.SingleUserVO;
 import com.tenyon.web.model.vo.sys.user.SysUserVO;
@@ -127,4 +128,11 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     SingleUserVO getSingleUser(Long id);
+
+    /**
+     * 获取权限路由菜单
+     * @param userId
+     * @return
+     */
+    List<RouterVO> getAuthMenuList(long userId);
 }

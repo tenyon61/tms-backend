@@ -28,16 +28,16 @@
     <select id="getMenuByUserId" resultType="com.tenyon.web.model.entity.sys.SysMenu">
         select DISTINCT m.*
         from sys_user_role as ur
-                 left join sys_role as r on ur.roleId = r.id
-                 left join sys_role_menu as rm on ur.roleId = rm.roleId
-                 left join sys_menu as m on rm.menuId = m.id
+                 inner join sys_role as r on ur.roleId = r.id
+                 inner join sys_role_menu as rm on ur.roleId = rm.roleId
+                 inner join sys_menu as m on rm.menuId = m.id
         where ur.userId = #{userId}
         order by m.orderNum asc
     </select>
     <select id="getMenuByRoleId" resultType="com.tenyon.web.model.entity.sys.SysMenu">
         select DISTINCT m.*
         from sys_role_menu as rm
-                 left join sys_menu as m on rm.menuId = m.id
+                 inner join sys_menu as m on rm.menuId = m.id
         where rm.roleId = #{roleId}
         order by m.orderNum asc
     </select>

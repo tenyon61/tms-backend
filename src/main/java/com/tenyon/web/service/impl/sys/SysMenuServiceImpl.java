@@ -12,16 +12,22 @@ import com.tenyon.web.exception.ErrorCode;
 import com.tenyon.web.mapper.sys.SysMenuMapper;
 import com.tenyon.web.model.dto.sys.menu.MenuQueryRequest;
 import com.tenyon.web.model.entity.sys.SysMenu;
+import com.tenyon.web.model.entity.sys.SysUser;
+import com.tenyon.web.model.enums.sys.UserRoleEnum;
 import com.tenyon.web.model.vo.sys.menu.MakeMenuTree;
+import com.tenyon.web.model.vo.sys.menu.RouterVO;
 import com.tenyon.web.model.vo.sys.menu.SysMenuVO;
 import com.tenyon.web.service.sys.SysMenuService;
+import com.tenyon.web.service.sys.SysUserService;
 import com.tenyon.web.utils.SqlUtils;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

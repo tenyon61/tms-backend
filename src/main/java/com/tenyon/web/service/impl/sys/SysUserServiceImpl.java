@@ -23,6 +23,7 @@ import com.tenyon.web.model.entity.sys.SysUserRole;
 import com.tenyon.web.model.enums.sys.UserRoleEnum;
 import com.tenyon.web.model.vo.sys.menu.AssignTreeVO;
 import com.tenyon.web.model.vo.sys.menu.MakeMenuTree;
+import com.tenyon.web.model.vo.sys.menu.RouterVO;
 import com.tenyon.web.model.vo.sys.user.LoginUserVO;
 import com.tenyon.web.model.vo.sys.user.SingleUserVO;
 import com.tenyon.web.model.vo.sys.user.SysUserVO;
@@ -138,6 +139,61 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return true;
     }
 
+    @Override
+    public LoginUserVO getLoginUserVO(SysUser sysUser) {
+        if (sysUser == null) {
+            return null;
+        }
+        LoginUserVO loginUserVO = new LoginUserVO();
+        BeanUtil.copyProperties(sysUser, loginUserVO);
+        // 组装token
+        SaTokenInfo tokenInfo = StpKit.BMS.getTokenInfo();
+        loginUserVO.setToken(tokenInfo.tokenValue);
+        return loginUserVO;
+    }
+
+    @Override
+    public SysUserVO getUserVO(SysUser sysUser) {
+        if (sysUser == null) {
+            return null;
+        }
+        SysUserVO sysUserVO = new SysUserVO();
+        BeanUtil.copyProperties(sysUser, sysUserVO);
+        return sysUserVO;
+    }
+
+    @Override
+    public List<SysUserVO> getUserVOList(List<SysUser> sysUserList) {
+        if (CollectionUtils.isEmpty(sysUserList)) {
+            return new ArrayList<>();
+        }
+        return sysUserList.stream().map(this::getUserVO).collect(Collectors.toList());
+    }
+
+    @Override
+    public QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest) {
+        if (userQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+        }
+        Long id = userQueryRequest.getId();
+        String userAccount = userQueryRequest.getUserAccount();
+        String userName = userQueryRequest.getUserName();
+        String email = userQueryRequest.getEmail();
+        String phone = userQueryRequest.getPhone();
+        String userProfile = userQueryRequest.getUserProfile();
+        String sortField = userQueryRequest.getSortField();
+        String sortOrder = userQueryRequest.getSortOrder();
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(ObjectUtil.isNotEmpty(id), "id", id);
+        queryWrapper.eq(StrUtil.isNotBlank(userAccount), "userAccount", userAccount);
+        queryWrapper.like(StrUtil.isNotBlank(userProfile), "userProfile", userProfile);
+        queryWrapper.like(StrUtil.isNotBlank(email), "email", email);
+        queryWrapper.like(StrUtil.isNotBlank(phone), "phone", phone);
+        queryWrapper.like(StrUtil.isNotBlank(userName), "userName", userName);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals("ascend"), sortField);
+        return queryWrapper;
+    }
+
     @Transactional
     @Override
     public Long saveUser(SysUser sysUser) {
@@ -207,37 +263,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public LoginUserVO getLoginUserVO(SysUser sysUser) {
-        if (sysUser == null) {
-            return null;
-        }
-        LoginUserVO loginUserVO = new LoginUserVO();
-        BeanUtil.copyProperties(sysUser, loginUserVO);
-        // 组装token
-        SaTokenInfo tokenInfo = StpKit.BMS.getTokenInfo();
-        loginUserVO.setToken(tokenInfo.tokenValue);
-        return loginUserVO;
-    }
-
-    @Override
-    public SysUserVO getUserVO(SysUser sysUser) {
-        if (sysUser == null) {
-            return null;
-        }
-        SysUserVO sysUserVO = new SysUserVO();
-        BeanUtil.copyProperties(sysUser, sysUserVO);
-        return sysUserVO;
-    }
-
-    @Override
-    public List<SysUserVO> getUserVOList(List<SysUser> sysUserList) {
-        if (CollectionUtils.isEmpty(sysUserList)) {
-            return new ArrayList<>();
-        }
-        return sysUserList.stream().map(this::getUserVO).collect(Collectors.toList());
-    }
-
-    @Override
     public AssignTreeVO getAssignTreeVO(Long userId, Long roleId) {
         SysUser user = this.getById(userId);
         List<SysMenu> menuList;
@@ -287,27 +312,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public QueryWrapper<SysUser> getQueryWrapper(UserQueryRequest userQueryRequest) {
-        if (userQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+    public List<RouterVO> getAuthMenuList(long userId) {
+        SysUser user = this.getById(userId);
+        List<SysMenu> menuList;
+        if (StrUtil.isNotBlank(user.getUserRole()) && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole())) {
+            menuList = sysMenuService.list();
+        } else {
+            menuList = sysMenuService.getMenuByUserId(userId);
         }
-        Long id = userQueryRequest.getId();
-        String userAccount = userQueryRequest.getUserAccount();
-        String userName = userQueryRequest.getUserName();
-        String email = userQueryRequest.getEmail();
-        String phone = userQueryRequest.getPhone();
-        String userProfile = userQueryRequest.getUserProfile();
-        String sortField = userQueryRequest.getSortField();
-        String sortOrder = userQueryRequest.getSortOrder();
-        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(ObjectUtil.isNotEmpty(id), "id", id);
-        queryWrapper.eq(StrUtil.isNotBlank(userAccount), "userAccount", userAccount);
-        queryWrapper.like(StrUtil.isNotBlank(userProfile), "userProfile", userProfile);
-        queryWrapper.like(StrUtil.isNotBlank(email), "email", email);
-        queryWrapper.like(StrUtil.isNotBlank(phone), "phone", phone);
-        queryWrapper.like(StrUtil.isNotBlank(userName), "userName", userName);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals("ascend"), sortField);
-        return queryWrapper;
+        List<SysMenu> collect = Optional.ofNullable(menuList).orElse(new ArrayList<>()).stream().filter(item -> ObjectUtil.isNotNull(item.getType()) && item.getType() != 2).toList();
+        return MakeMenuTree.makeRouter(collect, 0L);
     }
 
 }

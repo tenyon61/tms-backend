@@ -1,7 +1,5 @@
 package com.tenyon.web.controller;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.tenyon.web.common.BaseResponse;
 import com.tenyon.web.common.ResultUtils;
 import com.tenyon.web.exception.BusinessException;
@@ -9,9 +7,7 @@ import com.tenyon.web.exception.ErrorCode;
 import com.tenyon.web.exception.ThrowUtils;
 import com.tenyon.web.model.dto.sys.user.UserLoginRequest;
 import com.tenyon.web.model.dto.sys.user.UserRegisterRequest;
-import com.tenyon.web.model.entity.sys.SysMenu;
 import com.tenyon.web.model.entity.sys.SysUser;
-import com.tenyon.web.model.vo.sys.menu.MakeMenuTree;
 import com.tenyon.web.model.vo.sys.menu.RouterVO;
 import com.tenyon.web.model.vo.sys.user.LoginUserVO;
 import com.tenyon.web.service.sys.SysMenuService;
@@ -84,11 +80,8 @@ public class AuthController {
     @Operation(summary = "获取权限路由菜单")
     @GetMapping("/getAuthMenuList")
     public BaseResponse<List<RouterVO>> getAuthMenuList(long userId) {
-        List<SysMenu> menus = sysMenuService.getMenuByUserId(userId);
-        ThrowUtils.throwIf(CollUtil.isEmpty(menus), ErrorCode.OPERATION_ERROR, "没有权限菜单");
-        List<SysMenu> collect = menus.stream().filter(menu -> ObjectUtil.isNotNull(menu) && menu.getType() != 2).toList();
-        List<RouterVO> routerVOS = MakeMenuTree.makeRouter(collect, 0L);
-        return ResultUtils.success(routerVOS);
+        List<RouterVO> routers = sysUserService.getAuthMenuList(userId);
+        return ResultUtils.success(routers);
     }
 
 }
