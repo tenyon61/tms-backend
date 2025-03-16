@@ -84,7 +84,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.tms.web.controller
+      packages-to-scan: com.tenyon.web.controller
 # knife4j的增强配置
 knife4j:
   enable: true
