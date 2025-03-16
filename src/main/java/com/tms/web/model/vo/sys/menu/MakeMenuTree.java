@@ -1,5 +1,6 @@
 package com.tms.web.model.vo.sys.menu;
 
+import cn.hutool.core.collection.CollUtil;
 import com.tms.web.model.entity.sys.SysMenu;
 import com.tms.web.model.enums.sys.MenuTypeEnum;
 
@@ -90,7 +91,11 @@ public class MakeMenuTree {
     private static void handleRootMenu(RouterVO router, SysMenu menu) {
         router.setComponent("ProLayout");
 
-        if (menu.getType() == MenuTypeEnum.MENU.getValue()) {
+        if (menu.getType() == MenuTypeEnum.DIRECT.getValue()) {
+            if (CollUtil.isNotEmpty(router.getChildren())) {
+                router.setRedirect(router.getChildren().get(0).getPath());
+            }
+        } else if (menu.getType() == MenuTypeEnum.MENU.getValue()) {
             // 创建自动跳转子路由
             RouterVO defaultChild = createAutoRedirectChild(menu);
             // 保留原有子路由并添加默认跳转路由
