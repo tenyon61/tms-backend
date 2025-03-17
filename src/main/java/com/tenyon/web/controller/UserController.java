@@ -15,7 +15,6 @@ import com.tenyon.web.model.dto.sys.user.UserUpdateMyRequest;
 import com.tenyon.web.model.dto.sys.user.UserUpdateRequest;
 import com.tenyon.web.model.entity.sys.SysUser;
 import com.tenyon.web.model.vo.sys.menu.AssignTreeVO;
-import com.tenyon.web.model.vo.sys.user.SingleUserVO;
 import com.tenyon.web.model.vo.sys.user.SysUserVO;
 import com.tenyon.web.service.sys.SysUserService;
 import io.swagger.v3.oas.annotations.Operation;

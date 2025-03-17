@@ -1,7 +1,7 @@
 package com.tenyon.web.mapper.sys;
 
-import com.tenyon.web.model.entity.sys.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tenyon.web.model.entity.sys.SysUser;
 
 /**
  * 用户数据库操作

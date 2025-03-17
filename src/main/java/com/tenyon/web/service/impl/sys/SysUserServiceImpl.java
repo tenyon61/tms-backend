@@ -25,7 +25,6 @@ import com.tenyon.web.model.vo.sys.menu.AssignTreeVO;
 import com.tenyon.web.model.vo.sys.menu.MakeMenuTree;
 import com.tenyon.web.model.vo.sys.menu.RouterVO;
 import com.tenyon.web.model.vo.sys.user.LoginUserVO;
-import com.tenyon.web.model.vo.sys.user.SingleUserVO;
 import com.tenyon.web.model.vo.sys.user.SysUserVO;
 import com.tenyon.web.service.sys.SysMenuService;
 import com.tenyon.web.service.sys.SysUserRoleService;

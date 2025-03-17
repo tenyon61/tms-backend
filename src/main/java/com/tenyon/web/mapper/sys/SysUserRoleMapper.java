@@ -1,7 +1,7 @@
 package com.tenyon.web.mapper.sys;
 
-import com.tenyon.web.model.entity.sys.SysUserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tenyon.web.model.entity.sys.SysUserRole;
 
 /**
 * @author tenyon

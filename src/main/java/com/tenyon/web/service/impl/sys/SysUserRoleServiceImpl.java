@@ -1,9 +1,9 @@
 package com.tenyon.web.service.impl.sys;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tenyon.web.mapper.sys.SysUserRoleMapper;
 import com.tenyon.web.model.entity.sys.SysUserRole;
 import com.tenyon.web.service.sys.SysUserRoleService;
-import com.tenyon.web.mapper.sys.SysUserRoleMapper;
 import org.springframework.stereotype.Service;
 
 /**

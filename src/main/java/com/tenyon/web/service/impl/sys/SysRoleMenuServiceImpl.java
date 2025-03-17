@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tenyon.web.exception.ErrorCode;
 import com.tenyon.web.exception.ThrowUtils;
+import com.tenyon.web.mapper.sys.SysRoleMenuMapper;
 import com.tenyon.web.model.entity.sys.SysRoleMenu;
 import com.tenyon.web.service.sys.SysRoleMenuService;
-import com.tenyon.web.mapper.sys.SysRoleMenuMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
