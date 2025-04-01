@@ -133,7 +133,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public boolean logout() {
         ThrowUtils.throwIf(!StpKit.BMS.isLogin(), ErrorCode.NOT_LOGIN_ERROR, "暂未登录");
         // 移除登录态
-        StpKit.BMS.getSession().removeTokenSign(UserConstant.USER_LOGIN_STATE);
+        StpKit.BMS.getSession().removeTerminal(UserConstant.USER_LOGIN_STATE);
         StpKit.BMS.logout();
         return true;
     }
